@@ -258,7 +258,7 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
                   <span aria-hidden="true">·</span>
                   <span>{currentStudent.semester}</span>
                   <span aria-hidden="true">·</span>
-                  <span>{currentStudent.age} years old</span>
+                  <span>{currentStudent.age === null ? 'Age not provided' : `${currentStudent.age} years old`}</span>
                 </div>
               </div>
             </div>
@@ -343,20 +343,20 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="text-base font-bold text-slate-900">
-                Complete Fieldwork Interview Dossier ({studentQuestions.length} Questions)
+                {programData?.sharedAnswers ? 'Program-Level Fieldwork Responses' : 'Complete Fieldwork Interview Dossier'} ({studentQuestions.length} Questions)
               </h3>
               <p className="text-xs text-slate-500">
-                Faithful transcription and categorization of answers provided by {currentStudent.name} (ID: {currentStudent.studentCode})
+                {programData?.sourceNote || `Faithful transcription and categorization of answers provided by ${currentStudent.name} (ID: ${currentStudent.studentCode})`}
               </p>
             </div>
             <span className="text-xs text-slate-500 font-medium bg-slate-100 px-2.5 py-1 rounded">
-              {studentQuestions.length} of {studentQuestions.length} questions completed
+              {programData?.sharedAnswers ? `${studentQuestions.length} program-level responses` : `${Object.keys(currentStudent.answers).length} of ${studentQuestions.length} questions completed`}
             </span>
           </div>
 
           <div className="space-y-4">
             {studentQuestions.map((question) => {
-              const answer = currentStudent.answers[question.id] || 'Answer not recorded.';
+              const answer = programData?.sharedAnswers?.[question.id] || currentStudent.answers[question.id] || 'Answer not recorded.';
               return (
                 <div
                   key={question.id}

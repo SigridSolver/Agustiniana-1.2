@@ -524,7 +524,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
                   {/* Card Footer */}
                   <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                     <span className="text-slate-400 text-[11px]">
-                      {student.age} yrs · {student.campus}
+                      {student.age === null ? 'Age not provided' : `${student.age} yrs`} · {student.campus}
                     </span>
 
                     <button

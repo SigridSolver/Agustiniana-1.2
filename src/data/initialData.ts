@@ -1,4 +1,5 @@
 import { InterviewedStudent, Interviewer, ProjectMetadata, Question } from '../types';
+import { additionalStudents, additionalPrograms } from './additionalPrograms';
 
 export const initialMetadata: ProjectMetadata = {
   university: 'UniAgustiniana - Universitaria Agustiniana',
@@ -2232,6 +2233,8 @@ export const initialStudents: InterviewedStudent[] = [
   }
 ];
 
+initialStudents.push(...additionalStudents);
+
 export const analyticalInsights = [
   {
     title: '1. Program Motivation & Favorite Subjects (Q1 & Q2)',
@@ -2543,6 +2546,9 @@ export const internationalBusinessSurveyResults: SurveyQuestionBreakdown[] = [
 ];
 
 export interface CareerProgramData {
+  researchTeam?: string;
+  sourceNote?: string;
+  sharedAnswers?: Record<number, string>;
   careerName: string;
   shortName: string;
   faculty: string;
@@ -2563,6 +2569,7 @@ export interface CareerProgramData {
 }
 
 export const careerProgramsRegistry: Record<string, CareerProgramData> = {
+  ...additionalPrograms,
   'Film and Television (Cine y Televisión)': {
     careerName: 'Film and Television (Cine y Televisión)',
     shortName: 'Film and Television',

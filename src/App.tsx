@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { additionalStudents } from './data/additionalPrograms';
 import { 
   initialMetadata, 
   initialQuestions, 
   initialStudents, 
   initialInterviewers,
   analyticalInsights,
-  universityCareersList
+  universityCareersList,
+  careerProgramsRegistry
 } from './data/initialData';
 import { ProjectMetadata, Question, InterviewedStudent, Interviewer, ViewTab } from './types';
 import { Header } from './components/Header';
@@ -35,7 +37,8 @@ export default function App() {
 
   const [students, setStudents] = useState<InterviewedStudent[]>(() => {
     const saved = localStorage.getItem('uniagustiniana_students_v12');
-    return saved ? JSON.parse(saved) : initialStudents;
+    const existing: InterviewedStudent[] = saved ? JSON.parse(saved) : initialStudents;
+    return [...existing, ...additionalStudents.filter((added) => !existing.some((student) => student.id === added.id || student.studentCode === added.studentCode))];
   });
 
   const [interviewers, setInterviewers] = useState<Interviewer[]>(() => {
@@ -45,6 +48,7 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState<ViewTab>('summary');
   const [selectedQuestionId, setSelectedQuestionId] = useState<number>(1);
+  const [questionCareer, setQuestionCareer] = useState<string | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<string>(students[0]?.id || 'cin-1');
   const [selectedCareer, setSelectedCareer] = useState<string>('Film and Television (Cine y Televisión)');
   const [isPrintMode, setIsPrintMode] = useState<boolean>(false);
@@ -125,7 +129,7 @@ export default function App() {
 
     const updatedStudents = [...students, newStudent];
     setStudents(updatedStudents);
-    localStorage.setItem('uniagustiniana_students_v5', JSON.stringify(updatedStudents));
+    localStorage.setItem('uniagustiniana_students_v12', JSON.stringify(updatedStudents));
     setSelectedStudentId(newStudentId);
     setSelectedCareer(targetCareer);
   };
@@ -141,7 +145,8 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSelectQuestion = (questionId: number) => {
+  const handleSelectQuestion = (questionId: number, career?: string) => {
+    setQuestionCareer(career || null);
     setSelectedQuestionId(questionId);
     setActiveTab('questions');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -221,13 +226,22 @@ export default function App() {
         )}
 
         {activeTab === 'questions' && (
+          <>
+          {questionCareer && careerProgramsRegistry[questionCareer]?.sharedAnswers && (
+            <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6 space-y-2">
+              <h2 className="font-bold">{questionCareer} · Program-Level Response</h2>
+              <p className="text-sm">{careerProgramsRegistry[questionCareer].sharedAnswers?.[selectedQuestionId]}</p>
+              <p className="text-xs text-slate-500">{careerProgramsRegistry[questionCareer].sourceNote}</p>
+            </div>
+          )}
           <QuestionDetailView
-            questions={questions}
-            students={students}
+            questions={questionCareer ? careerProgramsRegistry[questionCareer]?.questions || questions : questions}
+            students={questionCareer ? students.filter((student) => student.career === questionCareer) : students}
             selectedQuestionId={selectedQuestionId}
             onSelectQuestionId={setSelectedQuestionId}
             onSelectStudent={handleSelectStudent}
           />
+          </>
         )}
 
         {activeTab === 'students' && (
@@ -236,7 +250,7 @@ export default function App() {
             questions={questions}
             selectedStudentId={selectedStudentId}
             onSelectStudentId={setSelectedStudentId}
-            onSelectQuestion={handleSelectQuestion}
+            onSelectQuestion={(id) => handleSelectQuestion(id, students.find((student) => student.id === selectedStudentId)?.career)}
           />
         )}
 

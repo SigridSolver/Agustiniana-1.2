@@ -26,10 +26,10 @@ export interface InterviewedStudent {
   career: string;
   faculty: string;
   semester: string;
-  campus: 'Tagaste Campus' | 'Suba Campus';
-  age: number;
+  campus: 'Tagaste Campus' | 'Suba Campus' | 'Not provided';
+  age: number | null;
   highlightQuote: string;
-  perceivedEnglishLevel: 'A1 - Beginner' | 'A2 - Elementary' | 'B1 - Intermediate' | 'B2 - Upper Intermediate';
+  perceivedEnglishLevel: 'A1 - Beginner' | 'A2 - Elementary' | 'B1 - Intermediate' | 'B2 - Upper Intermediate' | 'Not assessed';
   answers: { [questionId: number]: string };
   audioTime?: string;
   avatarColor: string;

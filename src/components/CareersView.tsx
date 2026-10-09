@@ -39,7 +39,7 @@ interface CareersViewProps {
   questions: Question[];
   selectedCareer?: string;
   onSelectStudent: (studentId: string) => void;
-  onSelectQuestion: (questionId: number) => void;
+  onSelectQuestion: (questionId: number, career?: string) => void;
   onAddNewStudentToCareer: (career: string) => void;
 }
 
@@ -108,7 +108,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
             University Degree Programs ({sortedCareers.length} Careers):
           </span>
           <span className="text-[11px] text-amber-700 font-medium">
-            Select a career tab to explore its interviewed student cohort (max 8/career)
+            Select a career tab to explore its participants and fieldwork
           </span>
         </div>
 
@@ -197,7 +197,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
               <span>{programData?.campus || careerStudents[0]?.campus || (isGastro ? 'Suba Campus (Main Culinary Labs)' : 'Tagaste Campus')}</span>
               <span className="text-slate-400">·</span>
               <span className="font-semibold text-emerald-700">Academic Period 2026</span>
-              {careerStudents.length >= 8 && (
+              {careerStudents.length >= 8 && !programData?.sourceNote && (
                 <span className="bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded text-[11px] border border-emerald-300">
                   {isGastro ? 'Verified Cohort: 9 Students + 1 Docente Complete' : isLaw ? 'Verified Real Cohort: 9 Students Complete' : isIB ? 'Verified Real Cohort: 8 Students Complete' : `Verified Real Cohort: ${careerStudents.length} Complete`}
                 </span>
@@ -284,7 +284,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
             </div>
 
             <p className="text-[10px] text-slate-500 mt-2">
-              Interviewer qualitative evaluation during fieldwork.
+              {programData?.sourceNote ? 'English levels were not provided in the source.' : 'Interviewer qualitative evaluation during fieldwork.'}
             </p>
           </div>
 
@@ -338,6 +338,13 @@ export const CareersView: React.FC<CareersViewProps> = ({
           </div>
         )}
       </div>
+
+      {programData?.sourceNote && (
+        <div className="bg-white rounded-xl border border-slate-200 p-4 text-xs text-slate-600 space-y-2">
+          <p><strong>Research Team:</strong> {programData.researchTeam}</p>
+          <p>{programData.sourceNote}</p>
+        </div>
+      )}
 
       {/* Empty State if career has 0 students */}
       {careerStudents.length === 0 && (
@@ -459,9 +466,9 @@ export const CareersView: React.FC<CareersViewProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div>
               <div className="flex items-center gap-2 text-xs text-amber-700 font-semibold mb-0.5">
-                <span>Fieldwork Answers</span>
+                <span>{programData?.sharedAnswers ? 'Program-Level Fieldwork' : 'Fieldwork Answers'}</span>
                 <span className="text-slate-400">·</span>
-                <span>{currentStudent.name}</span>
+                <span>{programData?.sharedAnswers ? programData.shortName : currentStudent.name}</span>
                 <span className="text-slate-400">·</span>
                 {currentStudent.isTeacher ? (
                   <span className="font-sans bg-amber-400 px-2 py-0.5 rounded text-slate-950 border border-amber-500 font-black text-[10px] uppercase tracking-wider flex items-center gap-1">
@@ -469,12 +476,12 @@ export const CareersView: React.FC<CareersViewProps> = ({
                   </span>
                 ) : (
                   <span className="font-mono bg-amber-50 px-2 py-0.5 rounded text-amber-900 border border-amber-200 font-bold">
-                    Student ID: {currentStudent.studentCode}
+                    {programData?.sharedAnswers ? 'Shared source responses' : `Student ID: ${currentStudent.studentCode}`}
                   </span>
                 )}
               </div>
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <span>All {careerQuestions.length} Fieldwork Answers for {currentStudent.name}</span>
+                <span>{programData?.sharedAnswers ? `All ${careerQuestions.length} Program-Level Fieldwork Responses` : `All ${careerQuestions.length} Fieldwork Answers for ${currentStudent.name}`}</span>
                 {currentStudent.isTeacher && (
                   <span className="text-xs bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md border border-amber-300">
                     Faculty Professor Perspective
@@ -495,7 +502,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
 
           <div className="space-y-4">
             {careerQuestions.map((q) => {
-              const answer = currentStudent.answers[q.id] || 'Answer not recorded.';
+              const answer = programData?.sharedAnswers?.[q.id] || currentStudent.answers[q.id] || 'Answer not recorded.';
               return (
                 <div
                   key={q.id}
@@ -517,7 +524,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
                     </div>
 
                     <button
-                      onClick={() => onSelectQuestion(q.id)}
+                      onClick={() => onSelectQuestion(q.id, activeCareer)}
                       className="text-amber-700 hover:text-amber-900 text-[11px] font-medium flex items-center gap-1 hover:underline self-end sm:self-start"
                     >
                       <span>Analyze question</span>
@@ -594,7 +601,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
                       </div>
 
                       <button
-                        onClick={() => onSelectQuestion(sq.number)}
+                        onClick={() => onSelectQuestion(sq.number, activeCareer)}
                         className="text-amber-700 hover:text-amber-900 text-[10px] font-semibold flex items-center gap-0.5 hover:underline shrink-0"
                         title="Analyze this question in the full comparative matrix"
                       >
@@ -638,6 +645,20 @@ export const CareersView: React.FC<CareersViewProps> = ({
         </div>
       )}
 
+      {programData?.sourceNote && !careerVideo && (
+        <div className="pt-2">
+          <div className="bg-slate-900 text-white rounded-xl border border-slate-800 shadow-md overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-800 bg-slate-950/70">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">UniAgustiniana Audiovisual Record</span>
+              <h4 className="text-sm font-bold">{programData.shortName} · Fieldwork Presentation Video</h4>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="max-w-2xl mx-auto aspect-video rounded-xl bg-slate-950/40 border border-slate-800 flex items-center justify-center text-sm text-slate-400">Video link not provided.</div>
+              <p className="text-xs text-slate-300 border-t border-slate-800 pt-3">Research Team: <span className="text-amber-400">{programData.researchTeam}</span></p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Audiovisual & Fieldwork Evidence Section (Standardized for Film & TV, Architecture & future careers) */}
       {careerVideo && (
         <div className="pt-2">

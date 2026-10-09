@@ -18,7 +18,7 @@ Invoke-Git -GitArguments @('-C', $checkoutRoot, 'config', 'user.name', 'SigridSo
 Invoke-Git -GitArguments @('-C', $checkoutRoot, 'config', 'user.email', 'db9901126@gmail.com')
 
 $projectPaths = @(
-    'src', 'scripts', 'tests', '.gitignore', '.env.example', 'index.html',
+    'src', 'scripts', 'tests', 'README.md', '.gitignore', '.env.example', 'index.html',
     'metadata.json', 'package.json', 'tsconfig.json', 'vite.config.ts',
     'Mercadeo.txt', 'Comunicacion social.txt', 'Licenciatura en lenguas extranjeras.md'
 )

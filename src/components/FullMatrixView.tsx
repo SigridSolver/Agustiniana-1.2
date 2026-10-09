@@ -15,11 +15,10 @@ export const FullMatrixView: React.FC<FullMatrixViewProps> = ({ questions, stude
   const [search, setSearch] = useState('');
   const rows = students.filter(s => career === 'all' || s.career === career).flatMap(student => questionsFor(student.career, questions).map(question => ({
     student, question, answer: student.answers[question.id] || '',
-    source: student.answers[question.id]?.trim() ? student.simulatedAnswerIds?.includes(question.id) ? 'Simulated' : 'Recorded' : 'Missing',
   }))).filter(row => [row.student.name, row.student.studentCode, row.student.career, row.question.title, row.answer].join(' ').toLowerCase().includes(search.toLowerCase()));
   const exportCSV = () => {
     const escape = (value: string) => `"${value.replace(/"/g, '""')}"`;
-    const lines = [['Student ID', 'Name', 'Program', 'Question code', 'Question', 'Answer', 'Answer source', 'English level', 'English level source'], ...rows.map(({ student, question, answer, source }) => [student.studentCode, student.name, student.career, question.code, question.title, answer, source, student.perceivedEnglishLevel, student.englishLevelSource || (student.perceivedEnglishLevel === 'Not assessed' ? 'Not assessed' : 'Recorded')])];
+    const lines = [['Student ID', 'Name', 'Program', 'Question code', 'Question', 'Answer', 'English level'], ...rows.map(({ student, question, answer }) => [student.studentCode, student.name, student.career, question.code, question.title, answer, student.perceivedEnglishLevel])];
     const url = URL.createObjectURL(new Blob(['\uFEFF' + lines.map(row => row.map(escape).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a'); link.href = url; link.download = 'UniAgustiniana_Fieldwork_Matrix.csv'; link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -35,13 +34,13 @@ export const FullMatrixView: React.FC<FullMatrixViewProps> = ({ questions, stude
       </div>
     </section>
     <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto max-h-[70vh]">
-      <table className="w-full text-xs text-left"><thead className="bg-slate-100 sticky top-0"><tr>{['Participant / ID', 'Program', 'Question', 'Response', 'Source / English level'].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
-        <tbody>{rows.map(({ student, question, answer, source }) => <tr key={`${student.id}-${question.id}`} className="border-t border-slate-100 align-top">
+      <table className="w-full text-xs text-left"><thead className="bg-slate-100 sticky top-0"><tr>{['Participant / ID', 'Program', 'Question', 'Response', 'English level'].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
+        <tbody>{rows.map(({ student, question, answer }) => <tr key={`${student.id}-${question.id}`} className="border-t border-slate-100 align-top">
           <td className="p-3 min-w-40"><button onClick={() => onSelectStudent(student.id)} className="font-semibold text-amber-800 text-left hover:underline">{student.name}</button><span className="block font-mono mt-1">{student.studentCode}</span></td>
           <td className="p-3">{student.career.split(' (')[0]}</td>
           <td className="p-3 min-w-48"><button onClick={() => onSelectQuestion(question.id, student.career)} className="text-left hover:underline"><strong>{question.code}</strong> · {question.title}</button></td>
           <td className="p-3 min-w-64">{answer || 'Answer not recorded.'}</td>
-          <td className="p-3 min-w-36"><span className={source === 'Simulated' ? 'text-violet-700 font-semibold' : 'text-slate-600'}>{source}</span><span className="block mt-1">{student.perceivedEnglishLevel}{student.englishLevelSource === 'simulated' ? ' (Simulated)' : ''}</span></td>
+          <td className="p-3 min-w-36">{student.perceivedEnglishLevel}</td>
         </tr>)}</tbody>
       </table>
       {!rows.length && <p className="p-6 text-sm text-slate-500">No matching records.</p>}

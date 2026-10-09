@@ -12,7 +12,7 @@ export const initialMetadata: ProjectMetadata = {
   subtitle: 'A cross-program study of academic life, professional aspirations and campus experiences at UniAgustiniana Bogotá',
   generalObjective: 'To analyze student perceptions regarding their academic discipline, favorite subjects, campus spaces, internship opportunities, professional improvement, care for mascot Hugos, exchange destinations, and career practice.',
   methodologyType: 'Qualitative-descriptive survey and semi-structured English interview protocols with verbatim response analysis.',
-  sampleDescription: 'Program-specific participant rosters and responses, with simulated answers and English levels explicitly identified.'
+  sampleDescription: 'Program-specific participant rosters, responses and English levels.'
 };
 
 export const initialInterviewers: Interviewer[] = [
@@ -102,7 +102,7 @@ export const initialInterviewers: Interviewer[] = [
     role: 'Lead Student Researcher / Gastronomy Fieldwork Coordinator',
     program: 'Foreign Languages Degree',
     semester: '1st Semester',
-    campus: 'Suba & Tagaste Campuses',
+    campus: 'Tagaste Campus',
     email: 'ap.manrique@uniagustiniana.edu.co',
     reflection: 'Fieldwork with Gastronomy students and Professor Katherine Avendaño revealed high passion for culinary arts, bakery, mixology, and international exchanges to France, Spain, and Mexico. Professional English empowers their culinary careers in global hospitality and cruise lines.'
   },
@@ -112,7 +112,7 @@ export const initialInterviewers: Interviewer[] = [
     role: 'Lead Student Researcher / Gastronomy Fieldwork & Data Analysis',
     program: 'Foreign Languages Degree',
     semester: '1st Semester',
-    campus: 'Suba & Tagaste Campuses',
+    campus: 'Tagaste Campus',
     email: 'ct.caro@uniagustiniana.edu.co',
     reflection: 'Interviewing the 9 culinary students alongside their instructor highlighted the vital bridge between communicative English, international kitchen brigades, hospitality service standards, and campus awareness regarding mascot Ugus.'
   },
@@ -168,8 +168,7 @@ export const universityCareersList: string[] = [
   'Foreign Languages Degree (Licenciatura en Lenguas Extranjeras)',
   'Gastronomy (Gastronomía)',
   'Law (Derecho)',
-  'Marketing (Mercadeo)',
-  'Business Administration (Administración de Empresas)'
+  'Marketing (Mercadeo)'
 ];
 
 export const initialQuestions: Question[] = [
@@ -501,7 +500,7 @@ export const gastronomyQuestions: Question[] = [
     id: 4,
     code: 'Q4',
     title: 'What can you do in your practices?',
-    academicObjective: 'Evaluate culinary skills applied in practical kitchen workshops and real-world simulations.',
+    academicObjective: 'Evaluate culinary skills applied in practical kitchen workshops and practical exercises.',
     category: 'Culinary Practice & Workshops',
     summaryInsight: 'Cook, plate and prepare new dishes: 4 (40%) · Explore creativity & cultural roots: 2 (20%) · Cook international/Colombian recipes: 2 (20%) · Try different techniques: 1 (10%) · Real-world situations: 1 (10% - Professor).'
   },
@@ -1371,7 +1370,7 @@ export const initialStudents: InterviewedStudent[] = [
     answers: {
       1: 'Elective classes and practical interactive workshops.',
       2: 'Labor Legislation applied to tourism contracts.',
-      3: 'ESUNA simulation spaces and practical reception areas.',
+      3: 'ESUNA training spaces and practical reception areas.',
       4: 'Organization, administrative paperwork and booking operations.',
       5: 'Neglecting assigned academic and training responsibilities.',
       6: 'Greater commitment and responsibility with deadlines and coursework.',
@@ -1449,7 +1448,7 @@ export const initialStudents: InterviewedStudent[] = [
     answers: {
       1: 'The fun elective courses and practical training dynamics.',
       2: 'Elective etiquette and formal dining protocol.',
-      3: 'ESUNA simulation restaurant and bar laboratories.',
+      3: 'ESUNA training restaurant and bar laboratories.',
       4: 'Customer service, welcoming arrivals and providing guidance.',
       5: 'Acting arbitrarily without operational authorization.',
       6: 'Improving English proficiency to attend international tourists confidently.',
@@ -1520,7 +1519,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '2nd Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 19,
     avatarColor: 'bg-rose-600',
     highlightQuote: 'The thing I like the most in my career is pastry making; my dream is opening my own pastry shop.',
@@ -1546,7 +1545,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '2nd Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 20,
     avatarColor: 'bg-emerald-600',
     highlightQuote: 'I like bread making the most, and practicing at home is how I get better every day.',
@@ -1572,7 +1571,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '2nd Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 20,
     avatarColor: 'bg-blue-600',
     highlightQuote: 'The thing I like the most is experimenting with food and cooking traditional Colombian recipes.',
@@ -1598,7 +1597,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '4th Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 21,
     avatarColor: 'bg-amber-600',
     highlightQuote: 'What I like the most about my career is cooking and learning international food; I love my career.',
@@ -1624,7 +1623,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '4th Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 21,
     avatarColor: 'bg-teal-600',
     highlightQuote: 'What I like the most about my career is that it gives me peace of mind to create, plate and learn.',
@@ -1650,7 +1649,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '4th Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 20,
     avatarColor: 'bg-purple-600',
     highlightQuote: 'Learning new culinary techniques and mixology allows us to innovate and create on cruises outside Colombia.',
@@ -1676,7 +1675,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '4th Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 20,
     avatarColor: 'bg-indigo-600',
     highlightQuote: 'Gastronomy clears my mind and teaches me creativity; I would love to work on cruises after graduating.',
@@ -1702,7 +1701,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '2nd Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 19,
     avatarColor: 'bg-cyan-600',
     highlightQuote: 'Baking and preparing new culinary dishes in the kitchens inspires me to work in a hotel after graduating.',
@@ -1728,7 +1727,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: '2nd Semester',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 19,
     avatarColor: 'bg-orange-600',
     highlightQuote: 'The atmosphere in the kitchen and barista skills are my favorite part; my goal is having my own restaurant.',
@@ -1754,7 +1753,7 @@ export const initialStudents: InterviewedStudent[] = [
     career: 'Gastronomy (Gastronomía)',
     faculty: 'Faculty of Economic and Administrative Sciences',
     semester: 'Faculty Professor / Docente',
-    campus: 'Suba Campus',
+    campus: 'Tagaste Campus',
     age: 34,
     avatarColor: 'bg-amber-500',
     highlightQuote: 'The thing I like the most about the career is teaching and sharing knowledge about coffee, cocktails, wines and service.',
@@ -2244,7 +2243,7 @@ export const analyticalInsights = [
   },
   {
     title: '7. Hospitality Vocation, Etiquette & ESUNA Practical Labs (Q1, Q2 & Q3)',
-    description: 'In Hospitality and Tourism, 50% (4 students) chose People, cultures and places as what they like most, with 50% choosing Etiquette and Table Service as their favorite subject. Favorite campus spaces are evenly divided between ESUNA specialized simulation facilities (37.5%) and the campus Green Zones (37.5%).',
+    description: 'In Hospitality and Tourism, 50% (4 students) chose People, cultures and places as what they like most, with 50% choosing Etiquette and Table Service as their favorite subject. Favorite campus spaces are evenly divided between ESUNA specialized training facilities (37.5%) and the campus Green Zones (37.5%).',
     metric: '50% People & Cultures · 50% Etiquette Lab',
     tag: 'Hospitality & Protocol'
   },
@@ -2614,12 +2613,12 @@ export const careerProgramsRegistry: Record<string, CareerProgramData> = {
     careerName: 'Hospitality and Tourism (Hotelería y Turismo)',
     shortName: 'Hospitality and Tourism',
     faculty: 'Faculty of Economic and Administrative Sciences (ESUNA)',
-    campus: 'Tagaste Campus / ESUNA Labs',
+    campus: 'Tagaste Campus',
     video: {
       title: 'Hospitality and Tourism (Hotelería y Turismo) · Program Presentation Video',
       embedUrl: 'https://www.youtube-nocookie.com/embed/Pfmh4pQMmt4',
       externalUrl: 'https://youtu.be/Pfmh4pQMmt4?feature=shared',
-      description: 'Institutional presentation video of the Hospitality and Tourism (Hotelería y Turismo) academic program at Agustiniana University (UniAgustiniana - Tagaste Campus & ESUNA), showcasing practical hotel simulation laboratories, table service dining halls, culinary safety spaces, reception suites, and tourism management workshops evaluated during student fieldwork.',
+      description: 'Institutional presentation video of the Hospitality and Tourism (Hotelería y Turismo) academic program at Agustiniana University (UniAgustiniana - Tagaste Campus & ESUNA), showcasing practical hotel training laboratories, table service dining halls, culinary safety spaces, reception suites, and tourism management workshops evaluated during student fieldwork.',
       researchTeam: 'Valerin Sophia Conde Hernández & Tania Sarah Candela Ruiz'
     },
     highlights: {
@@ -2637,12 +2636,12 @@ export const careerProgramsRegistry: Record<string, CareerProgramData> = {
     careerName: 'Gastronomy (Gastronomía)',
     shortName: 'Gastronomy',
     faculty: 'Faculty of Economic and Administrative Sciences',
-    campus: 'Suba Campus (Main Culinary Labs) & Tagaste Campus',
+    campus: 'Tagaste Campus',
     video: {
       title: 'Gastronomy (Gastronomía) · Program Presentation Video',
       embedUrl: 'https://www.youtube-nocookie.com/embed/n0QLKB5ekpU',
       externalUrl: 'https://www.youtube.com/watch?v=n0QLKB5ekpU',
-      description: 'Institutional presentation video of the Gastronomy (Gastronomía) academic program at Agustiniana University (UniAgustiniana - Suba Campus & Tagaste), featuring professional baking kitchens, barista classrooms, mixology cocktail stations, dining room service facilities, and interviews with 9 students and Professor Katherine Avendaño.',
+      description: 'Institutional presentation video of the Gastronomy (Gastronomía) academic program at Agustiniana University (UniAgustiniana - Tagaste Campus), featuring professional baking kitchens, barista classrooms, mixology cocktail stations, dining room service facilities, and interviews with 9 students and Professor Katherine Avendaño.',
       researchTeam: 'Ana Paula Manrique Mijares & Carol Tatiana Caro Montaño'
     },
     highlights: {

@@ -84,15 +84,15 @@ export const CareersView: React.FC<CareersViewProps> = ({
   const careerHighlights = { title: 'Current Cohort Overview', cards: [
     { label: 'Participants', primary: String(totals.participants), secondary: `${totals.students} students · ${totals.teachers} faculty`, highlightColor: '' },
     { label: 'Responses', primary: String(totals.answers), secondary: `${totals.expected} applicable questions`, highlightColor: '' },
-    { label: 'Simulated responses', primary: String(totals.simulatedAnswers), secondary: 'Illustrative examples', highlightColor: '' },
+    { label: 'Questions', primary: String(careerQuestions.length), secondary: 'Program questionnaire', highlightColor: '' },
     { label: 'Completion', primary: `${totals.completion}%`, secondary: `${totals.missing} answers missing`, highlightColor: '' },
   ] };
   const surveyBreakdown = careerQuestions.map(q => {
     const groups = answerDistribution(careerStudents, q.id);
     const totalVotes = groups.reduce((sum, group) => sum + group.students.length, 0);
     return { number: q.id, question: q.title, category: q.category, totalVotes, options: groups.map(group => ({
-      label: group.answer + (group.simulated ? ` (${group.simulated} simulated)` : ''), votes: group.students.length,
-      pct: `${totalVotes ? (group.students.length / totalVotes * 100).toFixed(1) : 0}%`, color: group.simulated ? 'bg-violet-500' : 'bg-emerald-600',
+      label: group.answer, votes: group.students.length,
+      pct: `${totalVotes ? (group.students.length / totalVotes * 100).toFixed(1) : 0}%`, color: 'bg-emerald-600',
     })) };
   });
 
@@ -209,12 +209,12 @@ export const CareersView: React.FC<CareersViewProps> = ({
                 {totals.students} students · {totals.teachers} faculty
               </span>
               <span className="text-slate-400">·</span>
-              <span>{programData?.campus || careerStudents[0]?.campus || (isGastro ? 'Suba Campus (Main Culinary Labs)' : 'Tagaste Campus')}</span>
+              <span>{programData?.campus || careerStudents[0]?.campus || 'Tagaste Campus'}</span>
               <span className="text-slate-400">·</span>
               <span className="font-semibold text-emerald-700">Academic Period 2026</span>
               {totals.missing === 0 && totals.participants > 0 && (
                 <span className="bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded text-[11px] border border-emerald-300">
-                  {totals.answers} responses complete · {totals.simulatedAnswers} simulated
+                  {totals.answers} responses complete
                 </span>
               )}
             </div>
@@ -299,7 +299,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
             </div>
 
             <p className="text-[10px] text-slate-500 mt-2">
-              {careerStudents.filter(s => s.englishLevelSource === 'simulated').length} simulated levels · {careerStudents.filter(s => s.perceivedEnglishLevel === 'Not assessed').length} not assessed
+              {careerStudents.filter(s => s.perceivedEnglishLevel === 'Not assessed').length} not assessed
             </p>
           </div>
 
@@ -314,7 +314,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
 
             <div className="my-1">
               <span className="text-sm font-bold text-slate-900 block">
-                {programData?.campus || careerStudents[0]?.campus || (activeCareer.includes('Gastronomía') ? 'Suba Campus' : 'Tagaste Campus')}
+                {programData?.campus || careerStudents[0]?.campus || 'Tagaste Campus'}
               </span>
               <span className="text-[11px] text-slate-500">UniAgustiniana · Bogotá D.C.</span>
             </div>
@@ -457,7 +457,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
 
                   <div className="pt-2 mt-3 border-t border-slate-200/50 flex items-center justify-between text-xs">
                     <span className={`text-[11px] ${isCurrent ? 'text-amber-300' : isTeacher ? 'text-amber-800 font-semibold' : 'text-slate-500'}`}>
-                      Level: <strong>{st.perceivedEnglishLevel.split(' - ')[0]}</strong>{st.englishLevelSource === 'simulated' && ' - Simulated'}
+                      Level: <strong>{st.perceivedEnglishLevel.split(' - ')[0]}</strong>
                     </span>
                     <button
                       onClick={(e) => {
@@ -511,7 +511,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
 
             <div className="flex items-center gap-2">
               <span className="text-xs text-slate-500">
-                English Level {currentStudent.englishLevelSource === 'simulated' ? '(Simulated)' : '(CEFR)'}:
+                English Level (CEFR):
               </span>
               <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded font-bold text-xs">
                 {currentStudent.perceivedEnglishLevel}
@@ -552,7 +552,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
                   </div>
 
                   <div className="mt-3 pl-8 text-xs text-slate-700 leading-relaxed border-l-2 border-slate-300">
-                    {currentStudent.simulatedAnswerIds?.includes(q.id) && <span className="block text-violet-700 font-semibold mb-1">Simulated response</span>}
+
                     "{answer}"
                   </div>
                 </div>
@@ -583,7 +583,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
 
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs font-medium text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-200">
-                Recorded &amp; Simulated Responses
+                Participant Responses
               </span>
               <button
                 onClick={() => setIsSurveyExpanded(!isSurveyExpanded)}
@@ -744,7 +744,7 @@ export const CareersView: React.FC<CareersViewProps> = ({
                 </div>
 
                 <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black shadow-inner border border-slate-800 ring-1 ring-white/5">
-                  {careerVideo.isPlaceholder ? <a href={careerVideo.externalUrl} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex flex-col items-center justify-center text-sm text-amber-300 p-6 text-center"><span>Example YouTube link</span><span className="text-xs text-slate-400 mt-2">Placeholder only - Actual fieldwork video pending</span></a> : <iframe
+                  {careerVideo.isPlaceholder ? <a href={careerVideo.externalUrl} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex flex-col items-center justify-center text-sm text-amber-300 p-6 text-center"><span>Marketing Video</span><span className="text-xs text-slate-400 mt-2">Video pending</span></a> : <iframe
                     className="absolute inset-0 w-full h-full"
                     src={careerVideo.embedUrl}
                     title={careerVideo.title}

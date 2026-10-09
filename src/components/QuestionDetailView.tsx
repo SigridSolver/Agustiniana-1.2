@@ -27,7 +27,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
   onSelectStudent
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCampus, setSelectedCampus] = useState<'all' | 'Tagaste Campus' | 'Suba Campus'>('all');
+  const [selectedCampus, setSelectedCampus] = useState<'all' | 'Tagaste Campus'>('all');
   const [compareMode, setCompareMode] = useState(false);
   const [compareStudentA, setCompareStudentA] = useState<string>(students[0]?.id || '');
   const [compareStudentB, setCompareStudentB] = useState<string>(students[1]?.id || '');
@@ -166,7 +166,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
             const pct = denominator ? group.students.length / denominator * 100 : 0;
             return <div key={group.answer} className="text-xs space-y-1">
               <p>{group.answer}</p>
-              <div className="flex justify-between text-slate-500"><span>{group.simulated} simulated</span><span>{group.students.length} / {denominator} ({pct.toFixed(1)}%)</span></div>
+              <div className="flex justify-between text-slate-500"><span>{group.students.length} / {denominator} ({pct.toFixed(1)}%)</span></div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-500" style={{ width: `${pct}%` }} /></div>
             </div>;
           })}
@@ -211,16 +211,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
             >
               Tagaste
             </button>
-            <button
-              onClick={() => setSelectedCampus('Suba Campus')}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                selectedCampus === 'Suba Campus'
-                  ? 'bg-white text-slate-900 font-semibold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Suba
-            </button>
+
           </div>
 
           {/* Toggle Direct Comparison Mode */}
@@ -287,7 +278,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
 
                   <div className="bg-slate-50 rounded-lg p-4 text-xs text-slate-800 leading-relaxed border border-slate-200/80">
                     <span className="font-semibold text-slate-900 block mb-1.5">Direct Answer:</span>
-                    {studentA.simulatedAnswerIds?.includes(currentQuestion.id) && <span className="block text-violet-700 font-semibold">Simulated response</span>}
+
                     "{studentA.answers[currentQuestion.id] || 'No recorded answer.'}"
                   </div>
 
@@ -343,7 +334,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
 
                   <div className="bg-slate-50 rounded-lg p-4 text-xs text-slate-800 leading-relaxed border border-slate-200/80">
                     <span className="font-semibold text-slate-900 block mb-1.5">Direct Answer:</span>
-                    {studentB.simulatedAnswerIds?.includes(currentQuestion.id) && <span className="block text-violet-700 font-semibold">Simulated response</span>}
+
                     "{studentB.answers[currentQuestion.id] || 'No recorded answer.'}"
                   </div>
 
@@ -414,7 +405,7 @@ export const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
 
                     {/* The Actual Response */}
                     <div className="text-xs text-slate-700 leading-relaxed bg-slate-50/70 p-3.5 rounded-lg border border-slate-100">
-                      {student.simulatedAnswerIds?.includes(currentQuestion.id) && <span className="block text-violet-700 font-semibold">Simulated response</span>}"{answer}"
+                      "{answer}"
                     </div>
                   </div>
 

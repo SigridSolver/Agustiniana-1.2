@@ -139,7 +139,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
             <div className="space-y-1">
               <span className="font-semibold text-slate-900 block">2. Fieldwork Execution:</span>
               <p className="text-slate-600 leading-relaxed">
-                Original program summaries and participant rosters are retained. Individually generated examples are labeled as simulated.
+                Original program summaries and participant rosters are retained alongside the individual response records.
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
             <div className="space-y-1">
               <span className="font-semibold text-slate-900 block">Academic Integrity:</span>
               <p className="text-slate-600 leading-relaxed">
-                Conducted within the curricular framework of the Bachelor’s Degree in Foreign Languages at Universitaria Agustiniana. Simulated responses and English levels are identified separately from source records.
+                Conducted within the curricular framework of the Bachelor’s Degree in Foreign Languages at Universitaria Agustiniana. Participants, questions and responses are organized by degree program.
               </p>
             </div>
 

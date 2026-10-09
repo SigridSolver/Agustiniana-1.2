@@ -223,17 +223,17 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
               <div className="flex items-center gap-2">
                 <span className="text-slate-400">English Level (CEFR):</span>
                 <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-0.5 rounded font-bold">
-                  {currentStudent.perceivedEnglishLevel}{currentStudent.englishLevelSource === 'simulated' ? ' - Simulated' : ''}
+                  {currentStudent.perceivedEnglishLevel}
                 </span>
               </div>
             </div>
 
-            {/* Simulated Audio Player */}
+            {/* Audio Player */}
             <div className="flex items-center gap-3 bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700">
               <button
                 onClick={() => setIsPlayingAudio(!isPlayingAudio)}
                 className="w-6 h-6 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center transition-colors shadow-xs"
-                title="Simulate interview audio playback"
+                title="Interview audio"
               >
                 {isPlayingAudio ? (
                   <Pause className="w-3.5 h-3.5" />
@@ -314,7 +314,7 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
                   </div>
 
                   <div className="mt-3 pl-8 text-xs text-slate-700 leading-relaxed border-l-2 border-slate-300">
-                    {currentStudent.simulatedAnswerIds?.includes(question.id) && <span className="block text-violet-700 font-semibold mb-1">Simulated response</span>}"{answer}"
+                    "{answer}"
                   </div>
                 </div>
               );

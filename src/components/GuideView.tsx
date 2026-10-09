@@ -62,7 +62,7 @@ export const GuideView: React.FC<GuideViewProps> = () => {
               Sample Diversity (9 University Majors)
             </h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Highlight the balanced representation: Architecture, Social Communication, Business, Languages, Gastronomy, Law, Film, Engineering, and Marketing across Tagaste and Suba campuses.
+              Present the participating programs: Architecture, Social Communication, International Business, Languages, Gastronomy, Law, Film, Engineering, Tourism, and Marketing at Tagaste Campus.
             </p>
             <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded border border-amber-200">
               💡 <em>In this app:</em> Show the <strong>By Student</strong> profile dossiers.

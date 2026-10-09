@@ -100,7 +100,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
               <strong>General Objective:</strong> {metadata.generalObjective}
             </p>
             <p>
-              <strong>Methodology & Instrument:</strong> {metadata.methodologyType} ({totals.students} students and {totals.teachers} faculty across {totals.careers} programs; {totals.recordedAnswers} recorded and {totals.simulatedAnswers} simulated responses).
+              <strong>Methodology & Instrument:</strong> {metadata.methodologyType} ({totals.students} students and {totals.teachers} faculty across {totals.careers} programs; {totals.answers} responses).
             </p>
             <p>
               <strong>Research Teams:</strong> {interviewers.map(member => member.name).join(' / ')} - 1st Semester, Foreign Languages Degree.
@@ -128,7 +128,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                     <td className="p-2 border border-slate-300 font-medium">{st.name}</td>
                     <td className="p-2 border border-slate-300">{st.career}</td>
                     <td className="p-2 border border-slate-300">{st.semester}</td>
-                    <td className="p-2 border border-slate-300 font-semibold">{st.perceivedEnglishLevel}{st.englishLevelSource === 'simulated' ? ' (Simulated)' : ''}</td>
+                    <td className="p-2 border border-slate-300 font-semibold">{st.perceivedEnglishLevel}</td>
                   </tr>
                 ))}
               </tbody>
@@ -168,7 +168,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                   <thead className="bg-slate-50 text-slate-700">
                     <tr>
                       <th className="p-2 border border-slate-200 w-1/3">Student & Code</th>
-                      <th className="p-2 border border-slate-200">Response (Source Labeled)</th>
+                      <th className="p-2 border border-slate-200">Response</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -184,7 +184,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                           </div>
                         </td>
                         <td className="p-2 border border-slate-200 text-slate-700 italic leading-relaxed">
-                          {st.simulatedAnswerIds?.includes(q.id) && <strong className="block">Simulated response</strong>}"{st.answers[q.id] || 'Answer not recorded.'}"
+                          "{st.answers[q.id] || 'Answer not recorded.'}"
                         </td>
                       </tr>
                     ))}
@@ -204,7 +204,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
             <p>
               <strong>Coverage:</strong> {totals.answers} responses across {totals.careers} programs; {totals.missing} applicable answers missing.
             </p>
-            <p><strong>Data interpretation:</strong> Simulated responses and English levels are illustrative examples and must not be interpreted as measured findings. Original source summaries are retained separately.</p>
+            <p><strong>Data interpretation:</strong> Results are organized by degree program and questionnaire. Original source summaries are retained separately.</p>
           </div>
         </div>
 

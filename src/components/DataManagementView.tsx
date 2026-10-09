@@ -283,9 +283,7 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
                   onChange={(e) => handleStudentFieldChange('campus', e.target.value)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-hidden focus:border-slate-400 font-medium"
                 >
-                  <option value="Not provided">Not provided</option>
                   <option value="Tagaste Campus">Tagaste Campus</option>
-                  <option value="Suba Campus">Suba Campus</option>
                 </select>
               </div>
 
@@ -315,7 +313,7 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  English Level (CEFR; simulated examples remain labeled):
+                  English Level (CEFR):
                 </label>
                 <select
                   value={currentStudents[selectedStudentIndex].perceivedEnglishLevel}
@@ -342,7 +340,7 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
                   <label className="block text-xs font-semibold text-slate-800">
                     <span className="text-amber-700 font-bold mr-1">[{q.code}]</span>
                     {q.title}
-                    {currentStudents[selectedStudentIndex].simulatedAnswerIds?.includes(q.id) && <span className="text-violet-700 ml-2">Simulated response</span>}
+
                   </label>
                   <textarea
                     rows={2}

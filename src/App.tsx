@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { migrateStudents, normalizeTeam, readSaved, metrics, questionsFor, careerNames } from './data/research';
+import { migrateStudents, normalizeParticipants, normalizeTeam, readSaved, metrics, questionsFor, careerNames } from './data/research';
 import { 
   initialMetadata, 
   initialQuestions, 
@@ -25,7 +25,8 @@ import { PrintReportView } from './components/PrintReportView';
 export default function App() {
   // Migrate existing browser data without discarding participant edits.
   const [metadata, setMetadata] = useState<ProjectMetadata>(() => {
-    const saved = readSaved('uniagustiniana_meta_v12', initialMetadata);
+    const previous = readSaved('uniagustiniana_meta_v12', initialMetadata);
+    const saved = { ...previous, sampleDescription: initialMetadata.sampleDescription };
     return saved.title === 'Academic Life, Aspirations and Campus Perceptions in Film & Television' ? { ...saved, title: initialMetadata.title, subtitle: initialMetadata.subtitle, sampleDescription: initialMetadata.sampleDescription } : saved;
   });
 
@@ -34,7 +35,7 @@ export default function App() {
   });
 
   const [students, setStudents] = useState<InterviewedStudent[]>(() => {
-    return readSaved('uniagustiniana_students_v13', migrateStudents(readSaved('uniagustiniana_students_v12', initialStudents)));
+    return normalizeParticipants(readSaved('uniagustiniana_students_v13', migrateStudents(readSaved('uniagustiniana_students_v12', initialStudents))));
   });
 
   const [interviewers, setInterviewers] = useState<Interviewer[]>(() => {
@@ -65,7 +66,7 @@ export default function App() {
   ) => {
     setMetadata(newMetadata);
     setQuestions(newQuestions);
-    setStudents(newStudents);
+    setStudents(normalizeParticipants(newStudents));
     setInterviewers(normalizeTeam(newInterviewers));
 
     localStorage.setItem('uniagustiniana_meta_v12', JSON.stringify(newMetadata));
@@ -122,7 +123,7 @@ export default function App() {
       career: targetCareer,
       faculty: matchedFaculty,
       semester: `${Math.min(currentCount + 3, 8)}th Semester`,
-      campus: targetCareer.includes('Gastronomía') ? 'Suba Campus' : 'Tagaste Campus',
+      campus: 'Tagaste Campus',
       age: 20 + (currentCount % 4),
       highlightQuote: 'Individual response not provided.',
       perceivedEnglishLevel: 'Not assessed',
@@ -317,7 +318,7 @@ export default function App() {
             <span aria-hidden="true">·</span>
             <span>{totals.students} Students · {totals.teachers} Faculty</span>
             <span aria-hidden="true">·</span>
-            <span>{totals.answers} Responses · {totals.simulatedAnswers} Simulated</span>
+            <span>{totals.answers} Responses</span>
             <span aria-hidden="true">·</span>
             <button
               onClick={() => setIsPrintMode(true)}

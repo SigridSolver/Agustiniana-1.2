@@ -2287,6 +2287,36 @@ export interface SurveyQuestionBreakdown {
   options: Array<{ label: string; votes: number; pct: string; color?: string }>;
 }
 
+export const filmSurveyResults: SurveyQuestionBreakdown[] = [
+  { number: 1, question: 'What do you like most about your degree / career?', category: 'Program Appeal & Motivation', totalVotes: 8, options: [
+    { label: 'Photography (framing, light and camera technique)', votes: 5, pct: '63%' },
+    { label: 'University spaces (studios, editing suites and gear)', votes: 3, pct: '37%' }
+  ] },
+  { number: 2, question: 'What is your favorite subject?', category: 'Favorite Subjects', totalVotes: 8, options: [
+    { label: 'Photoshop', votes: 3, pct: '38%' }, { label: 'Photography', votes: 3, pct: '38%' },
+    { label: 'Narrative Workshop', votes: 2, pct: '25%' }
+  ] },
+  { number: 3, question: 'What is your favorite part of the university?', category: 'Campus Spaces', totalVotes: 8, options: [
+    { label: 'Campus green area', votes: 8, pct: '100%' }
+  ] },
+  { number: 4, question: 'What can you do in your internships / practicums?', category: 'Internships & Practicum', totalVotes: 8, options: [
+    { label: 'Work with both RCN and Caracol TV networks', votes: 4, pct: '50%' },
+    { label: 'Join audiovisual crews at RCN or Caracol TV', votes: 4, pct: '50%' }
+  ] },
+  { number: 5, question: 'What can you do to improve in your career?', category: 'Professional Improvement', totalVotes: 8, options: [
+    { label: 'Study and prepare more', votes: 7, pct: '88%' }, { label: 'Gain direct hands-on production experience', votes: 1, pct: '12%' }
+  ] },
+  { number: 6, question: 'How can you take care of Hugos?', category: 'Hugos Mascot Care', totalVotes: 8, options: [
+    { label: 'Care for his habitat and campus green spaces', votes: 5, pct: '63%' }, { label: 'Have not encountered him on campus', votes: 3, pct: '37%' }
+  ] },
+  { number: 7, question: 'Would you like to study in another country? Where?', category: 'International Exchange', totalVotes: 8, options: [
+    { label: 'USA / Hollywood', votes: 4, pct: '50%' }, { label: 'Mexico', votes: 2, pct: '25%' }, { label: 'Remain in Colombia', votes: 2, pct: '25%' }
+  ] },
+  { number: 8, question: 'Where do you think you can practice your career?', category: 'Career Practice & Employability', totalVotes: 8, options: [
+    { label: 'Television, film and streaming platforms', votes: 7, pct: '88%' }, { label: 'Canada (VFX and digital animation studios)', votes: 1, pct: '12%' }
+  ] }
+];
+
 export const lawSurveyResults: SurveyQuestionBreakdown[] = [
   {
     number: 1,
@@ -2561,6 +2591,7 @@ export const careerProgramsRegistry: Record<string, CareerProgramData> = {
         { label: 'Q8. Practice Career:', primary: 'TV, Film & Netflix (88%)', secondary: 'Canada (12%)' }
       ]
     },
+    surveyBreakdown: filmSurveyResults,
     questions: initialQuestions
   },
   'Architecture (Arquitectura)': {

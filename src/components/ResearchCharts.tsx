@@ -21,11 +21,13 @@ export function ResearchMetrics({ students, questions }: { students: Interviewed
 
 export function EnglishChart({ students }: { students: InterviewedStudent[] }) {
   const levels = englishLevels(students);
+  const assessed = students.filter(student => student.englishLevelSource === 'assessed').length;
+  const developmentCompleted = students.filter(student => student.englishLevelSource === 'example').length;
   const colors = ['#f59e0b', '#38bdf8', '#6366f1', '#10b981', '#94a3b8'];
   let offset = 0;
   return <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
-    <h3 className="font-bold text-lg">English Proficiency (CEFR)</h3>
-    <p className="text-xs text-slate-500 mt-1">Distribution among {students.length} selected participants. </p>
+    <h3 className="font-bold text-lg">Recorded English Level (CEFR)</h3>
+    <p className="text-xs text-slate-500 mt-1">{students.length} selected participants · {assessed} interviewer-assessed{developmentCompleted ? ` · ${developmentCompleted} completed during development` : ''}.</p>
     <div className="flex flex-col sm:flex-row items-center gap-6 mt-5">
       <svg viewBox="0 0 120 120" className="w-44 h-44 shrink-0" role="img" aria-label={`English levels: ${levels.map(l => `${l.label}: ${l.count}`).join(', ')}`}>
         <circle cx="60" cy="60" r="45" fill="none" stroke="#e2e8f0" strokeWidth="15" />

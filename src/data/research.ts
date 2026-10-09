@@ -7,6 +7,10 @@ export function questionsFor(career: string, fallback: Question[]) {
   return career === universityCareersList[0] ? fallback : careerProgramsRegistry[career]?.questions || fallback;
 }
 
+export function surveyBreakdownFor(career: string) {
+  return careerProgramsRegistry[career]?.surveyBreakdown || [];
+}
+
 export function careerNames(students: InterviewedStudent[]) {
   return [...new Set([...universityCareersList, ...students.map(s => s.career)])].filter(career => !career.startsWith('Business Administration ('));
 }

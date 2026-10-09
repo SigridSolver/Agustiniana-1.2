@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { BarChart3, ChevronDown, Filter, MessageSquareText, Users } from 'lucide-react';
+import { BarChart3, ChevronDown, Filter, MessageSquareText, Sparkles, Users } from 'lucide-react';
 import type { InterviewedStudent, Question } from '../types';
-import { careerNames, metrics, questionsFor, answerDistribution } from '../data/research';
+import { careerNames, metrics, questionsFor, answerDistribution, surveyBreakdownFor } from '../data/research';
 import { EnglishChart, ResearchMetrics } from './ResearchCharts';
 
 interface AnalyticsViewProps {
@@ -17,6 +17,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, question
   const [selectedCareer, setSelectedCareer] = useState('all');
   const [participantType, setParticipantType] = useState('all');
   const [selectedQuestion, setSelectedQuestion] = useState('all');
+  const [chartModes, setChartModes] = useState<Record<string, 'source' | 'live'>>({});
   const careers = careerNames(students);
   const filtered = students.filter(s => (selectedCareer === 'all' || s.career === selectedCareer) && (participantType === 'all' || (participantType === 'faculty' ? s.isTeacher : !s.isTeacher)));
   const questionOptions = useMemo(() => careers.flatMap(career => questionsFor(career, questions).map(q => ({ key: `${career}::${q.id}`, career, question: q }))), [careers, questions]);
@@ -81,12 +82,28 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, question
             const missing = cohort.length - answered;
             const visibleGroups = groups.slice(0, 5);
             const otherCount = groups.slice(5).reduce((sum, group) => sum + group.students.length, 0);
+            const sourceBreakdown = surveyBreakdownFor(career).find(item => item.number === q.id);
+            const consensus = sourceBreakdown?.options.find(option => option.votes === sourceBreakdown.totalVotes);
+            const cardKey = `${career}::${q.id}`;
+            const chartMode = chartModes[cardKey] || (sourceBreakdown ? 'source' : 'live');
+            const hasCodedInsight = /\d+(?:\.\d+)?\s*%|\d+\s+(?:students?|votes?|mentions?)/i.test(q.summaryInsight);
             const questionLabel = `${shortCareer(career)} ${q.code}`;
             return <article key={`${career}-${q.id}`} className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
               <div className="flex flex-wrap gap-2 items-center"><span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-900">{q.code}</span><span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{q.category}</span></div>
               <h4 className="font-semibold text-sm text-slate-900 mt-3 leading-snug">{q.title}</h4>
               <div className="flex gap-4 text-[11px] text-slate-500 mt-2 mb-4"><span>{answered} answered</span><span>{missing} missing</span><span>{groups.length} distinct answers</span></div>
-              {!answered ? <p className="rounded-lg bg-white p-3 text-xs text-slate-500">No responses in this participant selection.</p> : <div className="space-y-3">{visibleGroups.map(group => {
+              {sourceBreakdown && <div className="mb-4 inline-flex rounded-lg border border-slate-200 bg-white p-1" role="group" aria-label={`${q.code} chart source`}>
+                <button onClick={() => setChartModes(current => ({ ...current, [cardKey]: 'source' }))} aria-pressed={chartMode === 'source'} className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold ${chartMode === 'source' ? 'bg-slate-900 text-amber-300' : 'text-slate-600 hover:bg-slate-100'}`}>Coded fieldwork results</button>
+                <button onClick={() => setChartModes(current => ({ ...current, [cardKey]: 'live' }))} aria-pressed={chartMode === 'live'} className={`rounded-md px-2.5 py-1.5 text-[10px] font-semibold ${chartMode === 'live' ? 'bg-slate-900 text-amber-300' : 'text-slate-600 hover:bg-slate-100'}`}>Live responses</button>
+              </div>}
+              {chartMode === 'source' && sourceBreakdown ? <div className="space-y-3">
+                <p className="text-[10px] text-slate-500">Original coded survey · {sourceBreakdown.totalVotes} participants · unaffected by the live filters above</p>
+                {consensus && <div className="flex items-center gap-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-emerald-600 text-sm font-extrabold text-white">100%</span><div><p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">Unanimous finding</p><p className="mt-0.5 text-sm font-bold">{consensus.label}</p><p className="mt-1 text-[11px] text-emerald-800">All {sourceBreakdown.totalVotes} participants selected this response.</p></div></div>}
+                {sourceBreakdown.options.map((option, index) => <div key={option.label} className="rounded-lg border border-slate-200 bg-white p-3">
+                  <div className="flex items-start justify-between gap-3 text-xs mb-2"><span className="font-semibold text-slate-800 leading-snug">{option.label}</span><span className="shrink-0 text-slate-600 tabular-nums">{option.votes} · {option.pct}</span></div>
+                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full" style={{ width: `${sourceBreakdown.totalVotes ? option.votes / sourceBreakdown.totalVotes * 100 : 0}%`, backgroundColor: ['#f59e0b', '#4f46e5', '#059669', '#0891b2', '#d946ef', '#64748b'][index % 6] }}/></div>
+                </div>)}
+              </div> : !answered ? <p className="rounded-lg bg-white p-3 text-xs text-slate-500">No responses in this participant selection.</p> : <div className="space-y-3">{visibleGroups.map(group => {
                 const pct = answered ? group.students.length / answered * 100 : 0;
                 return <div key={group.answer}>
                   <div className="flex items-start justify-between gap-3 text-xs mb-1.5"><span className="text-slate-700 leading-snug">{group.answer}</span><span className="shrink-0 font-semibold tabular-nums text-slate-700">{group.students.length} · {pct.toFixed(0)}%</span></div>
@@ -94,6 +111,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, question
                   <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">{group.students.map(s => <button key={s.id} onClick={() => onSelectStudent?.(s.id)} className="text-[10px] text-amber-800 hover:underline text-left">{s.name}</button>)}</div>
                 </div>;
               })}</div>}
+              {hasCodedInsight && <details className="mt-4 rounded-lg border border-amber-200 bg-amber-50/80"><summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-[11px] font-semibold text-amber-950 [&::-webkit-details-marker]:hidden"><Sparkles size={13} className="shrink-0 text-amber-700"/>Original program synthesis</summary><p className="border-t border-amber-200 px-3 py-2.5 text-xs leading-relaxed text-amber-950">{q.summaryInsight}</p></details>}
               {groups.length > 5 && <details className="mt-4 rounded-lg border border-slate-200 bg-white"><summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-700">Show {groups.length - 5} more distinct answers ({otherCount} responses)</summary><div className="space-y-3 border-t border-slate-100 p-3">{groups.slice(5).map(group => <div key={group.answer} className="text-xs"><div className="flex justify-between gap-3"><span>{group.answer}</span><b>{group.students.length} · {(group.students.length / answered * 100).toFixed(0)}%</b></div><div className="flex flex-wrap gap-2 mt-1">{group.students.map(s => <button key={s.id} onClick={() => onSelectStudent?.(s.id)} className="text-[10px] text-amber-800 hover:underline">{s.name}</button>)}</div></div>)}</div></details>}
               <p className="mt-3 border-t border-slate-200 pt-2 text-[10px] text-slate-400">{questionLabel} · share of answered responses</p>
             </article>;

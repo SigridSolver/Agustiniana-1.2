@@ -1,0 +1,8 @@
+{
+  "name": "Investigación UniAgustiniana",
+  "description": "Plataforma de presentación interactiva de resultados de investigación: 10 preguntas y 8 estudiantes de distintas carreras por estudiantes de Licenciatura en Lenguas Extranjeras de la Universidad Agustiniana Bogotá.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

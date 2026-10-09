@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BarChart3 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { BarChart3, ChevronDown, Filter, MessageSquareText, Users } from 'lucide-react';
 import type { InterviewedStudent, Question } from '../types';
 import { careerNames, metrics, questionsFor, answerDistribution } from '../data/research';
 import { EnglishChart, ResearchMetrics } from './ResearchCharts';
@@ -11,67 +11,96 @@ interface AnalyticsViewProps {
   onSelectStudent?: (id: string) => void;
 }
 
+const shortCareer = (career: string) => career.split(' (')[0];
+
 export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, questions, onSelectCareer, onSelectStudent }) => {
   const [selectedCareer, setSelectedCareer] = useState('all');
   const [participantType, setParticipantType] = useState('all');
+  const [selectedQuestion, setSelectedQuestion] = useState('all');
   const careers = careerNames(students);
   const filtered = students.filter(s => (selectedCareer === 'all' || s.career === selectedCareer) && (participantType === 'all' || (participantType === 'faculty' ? s.isTeacher : !s.isTeacher)));
+  const questionOptions = useMemo(() => careers.flatMap(career => questionsFor(career, questions).map(q => ({ key: `${career}::${q.id}`, career, question: q }))), [careers, questions]);
+  const shownQuestions = questionOptions.filter(item => (selectedCareer === 'all' || item.career === selectedCareer) && (selectedQuestion === 'all' || item.key === selectedQuestion));
   const chartCareers = selectedCareer === 'all' ? careers : [selectedCareer];
-  return <div className="space-y-6 pb-12">
-    <section className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-      <h2 className="text-2xl font-bold flex items-center gap-2"><BarChart3 className="text-amber-600" /> Infographics & Charts</h2>
-      <p className="text-sm text-slate-600">Live calculations from the same participant records used by Summary, career tabs and profiles. Question numbers are interpreted within their own degree program.</p>
-      <div className="grid sm:grid-cols-2 gap-4">
-        <label className="text-xs font-semibold">Degree program<select value={selectedCareer} onChange={e => setSelectedCareer(e.target.value)} className="block w-full mt-1 p-2 border border-slate-300 rounded-lg"><option value="all">All degree programs</option>{careers.map(c => <option key={c} value={c}>{c.split(' (')[0]}</option>)}</select></label>
-        <label className="text-xs font-semibold">Participant type<select value={participantType} onChange={e => setParticipantType(e.target.value)} className="block w-full mt-1 p-2 border border-slate-300 rounded-lg"><option value="all">Students and faculty</option><option value="students">Students only</option><option value="faculty">Faculty only</option></select></label>
+  const totals = metrics(filtered, questions);
+
+  return <div className="space-y-7 pb-12">
+    <section className="relative overflow-hidden rounded-2xl bg-slate-950 text-white p-6 sm:p-8">
+      <div className="absolute -right-12 -top-20 h-64 w-64 rounded-full bg-amber-400/10 blur-2xl" />
+      <div className="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+        <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-400 flex items-center gap-2"><BarChart3 size={16}/> Research dashboard</p>
+          <h2 className="text-3xl sm:text-4xl font-bold mt-3">Infographics &amp; Charts</h2>
+          <p className="text-sm text-slate-300 mt-3">Explore participant profiles, response coverage and every program-specific question. Use the filters and participant links to inspect the people behind each result.</p></div>
+        <div className="grid grid-cols-2 gap-3 min-w-56">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4"><Users size={17} className="text-amber-400"/><p className="text-2xl font-bold mt-2">{totals.participants}</p><p className="text-xs text-slate-400">participants</p></div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4"><MessageSquareText size={17} className="text-emerald-400"/><p className="text-2xl font-bold mt-2">{shownQuestions.length}</p><p className="text-xs text-slate-400">questions in view</p></div>
+        </div>
       </div>
     </section>
+
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-4"><Filter size={16} className="text-amber-600"/><h3 className="font-bold">Explore the data</h3></div>
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <label className="text-xs font-semibold text-slate-600">Degree program<select value={selectedCareer} onChange={e => { setSelectedCareer(e.target.value); setSelectedQuestion('all'); }} className="block w-full mt-1.5 p-2.5 border border-slate-300 rounded-lg bg-white text-sm text-slate-900"><option value="all">All degree programs</option>{careers.map(c => <option key={c} value={c}>{shortCareer(c)}</option>)}</select></label>
+        <label className="text-xs font-semibold text-slate-600">Participant group<select value={participantType} onChange={e => setParticipantType(e.target.value)} className="block w-full mt-1.5 p-2.5 border border-slate-300 rounded-lg bg-white text-sm text-slate-900"><option value="all">Students and faculty</option><option value="students">Students only</option><option value="faculty">Faculty only</option></select></label>
+        <label className="text-xs font-semibold text-slate-600 sm:col-span-2 xl:col-span-1">Question<select value={selectedQuestion} onChange={e => setSelectedQuestion(e.target.value)} className="block w-full mt-1.5 p-2.5 border border-slate-300 rounded-lg bg-white text-sm text-slate-900"><option value="all">All questions ({questionOptions.length})</option>{questionOptions.filter(item => selectedCareer === 'all' || item.career === selectedCareer).map(item => <option key={item.key} value={item.key}>{shortCareer(item.career)} · {item.question.code} — {item.question.title}</option>)}</select></label>
+      </div>
+    </section>
+
     <ResearchMetrics students={filtered} questions={questions} />
     <EnglishChart students={filtered} />
-    <section className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-      <h3 className="text-lg font-bold">Participants by Degree Program</h3>
-      {chartCareers.map(career => {
+
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-5"><div><p className="text-xs font-bold uppercase tracking-wider text-amber-700">Cohort composition</p><h3 className="text-xl font-bold mt-1">Participants by degree program</h3></div><p className="text-xs text-slate-500">Select a program name to open its records</p></div>
+      <div className="grid md:grid-cols-2 gap-x-8 gap-y-5">{chartCareers.map(career => {
         const cohort = filtered.filter(s => s.career === career);
         const data = metrics(cohort, questions);
         const pct = filtered.length ? cohort.length / filtered.length * 100 : 0;
-        return <div key={career}>
-          <div className="flex justify-between gap-3 text-xs mb-1"><button onClick={() => onSelectCareer?.(career)} className="font-semibold text-left hover:underline">{career.split(' (')[0]}</button><span>{cohort.length} · {pct.toFixed(1)}%</span></div>
-          <div className="h-3 bg-slate-100 rounded-full overflow-hidden"><div className="bg-amber-500 h-full rounded-full" style={{ width: `${pct}%` }} /></div>
-          <p className="text-[11px] text-slate-500 mt-1">{data.students} students · {data.teachers} faculty · {data.answers}/{data.expected} responses</p>
+        return <div key={career} className="min-w-0">
+          <div className="flex justify-between gap-3 text-xs mb-2"><button onClick={() => onSelectCareer?.(career)} className="font-semibold text-left text-slate-800 hover:text-amber-700 hover:underline truncate">{shortCareer(career)}</button><span className="font-bold tabular-nums">{cohort.length} <span className="font-normal text-slate-500">· {pct.toFixed(1)}%</span></span></div>
+          <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all" style={{ width: `${pct}%` }}/></div>
+          <p className="text-[11px] text-slate-500 mt-1.5">{data.students} students · {data.teachers} faculty · {data.completion}% questionnaire completion</p>
         </div>;
-      })}
+      })}</div>
     </section>
-    <section className="space-y-4">
-      <div className="bg-slate-900 text-white p-5 rounded-xl space-y-3">
-        <h3 className="text-lg font-bold">Response Distributions by Program & Question</h3>
-        <p className="text-xs text-slate-300">Identical response text is grouped together. Each bar uses the number of non-empty responses shown for that question as its denominator.</p>
+
+    <section className="space-y-4" id="question-explorer">
+      <div className="rounded-2xl bg-slate-900 text-white p-5 sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-wider text-amber-400">Question explorer</p><h3 className="text-xl font-bold mt-1">Every question, visualized</h3>
+        <p className="text-sm text-slate-300 mt-2">Response bars show exact matching answers within each program. Since these are open-ended interviews, distinct answers remain visible as individual responses instead of being combined into unsupported themes.</p>
       </div>
       {chartCareers.map(career => {
         const cohort = filtered.filter(s => s.career === career);
-        return <details key={career} open={selectedCareer !== 'all' ? true : undefined} className="bg-white rounded-xl border border-slate-200 p-5">
-          <summary className="cursor-pointer font-bold">{career.split(' (')[0]} · {cohort.length} participants</summary>
-          {!cohort.length ? <p className="text-sm text-slate-500 mt-4">No participants match this selection.</p> : <div className="grid lg:grid-cols-2 gap-4 mt-5">{questionsFor(career, questions).map(q => {
-            const eligible = cohort;
-            const groups = answerDistribution(eligible, q.id);
+        const careerQuestions = shownQuestions.filter(item => item.career === career);
+        if (!careerQuestions.length) return null;
+        return <details key={career} open={selectedCareer !== 'all' || selectedQuestion !== 'all'} className="group rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden"><span><span className="block text-base font-bold">{shortCareer(career)}</span><span className="block text-xs text-slate-500 mt-1">{careerQuestions.length} questions · {cohort.length} matching participants</span></span><ChevronDown size={18} className="shrink-0 text-slate-400 transition-transform group-open:rotate-180"/></summary>
+          <div className="grid lg:grid-cols-2 gap-4 border-t border-slate-100 p-4 sm:p-5">{careerQuestions.map(({ question: q }) => {
+            const groups = answerDistribution(cohort, q.id);
             const answered = groups.reduce((sum, g) => sum + g.students.length, 0);
-            const missing = cohort.filter(s => !s.answers[q.id]?.trim()).length;
-            return <article key={q.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-              <p className="text-xs text-amber-800 font-semibold">{q.code} · {q.category}</p><h4 className="font-semibold text-sm">{q.title}</h4>
-              <p className="text-xs text-slate-500">{answered} responses shown · {missing} missing in this cohort</p>
-              {!groups.length && <p className="text-sm text-slate-500">No responses available.</p>}
-              {groups.map(group => {
+            const missing = cohort.length - answered;
+            const visibleGroups = groups.slice(0, 5);
+            const otherCount = groups.slice(5).reduce((sum, group) => sum + group.students.length, 0);
+            const questionLabel = `${shortCareer(career)} ${q.code}`;
+            return <article key={`${career}-${q.id}`} className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+              <div className="flex flex-wrap gap-2 items-center"><span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-900">{q.code}</span><span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{q.category}</span></div>
+              <h4 className="font-semibold text-sm text-slate-900 mt-3 leading-snug">{q.title}</h4>
+              <div className="flex gap-4 text-[11px] text-slate-500 mt-2 mb-4"><span>{answered} answered</span><span>{missing} missing</span><span>{groups.length} distinct answers</span></div>
+              {!answered ? <p className="rounded-lg bg-white p-3 text-xs text-slate-500">No responses in this participant selection.</p> : <div className="space-y-3">{visibleGroups.map(group => {
                 const pct = answered ? group.students.length / answered * 100 : 0;
-                return <div key={group.answer} className="space-y-1 border-t border-slate-200 pt-3">
-                  <p className="text-xs text-slate-700">{group.answer}</p>
-                  <div className="flex justify-between text-[11px] text-slate-500"><span>{group.students.length} · {pct.toFixed(1)}%</span></div>
-                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden"><div className={`h-full rounded-full bg-emerald-500`} style={{ width: `${pct}%` }} /></div>
-                  <div className="flex flex-wrap gap-2">{group.students.map(s => <button key={s.id} onClick={() => onSelectStudent?.(s.id)} className="text-[10px] text-amber-800 hover:underline text-left">{s.name} · ID: {s.studentCode}</button>)}</div>
+                return <div key={group.answer}>
+                  <div className="flex items-start justify-between gap-3 text-xs mb-1.5"><span className="text-slate-700 leading-snug">{group.answer}</span><span className="shrink-0 font-semibold tabular-nums text-slate-700">{group.students.length} · {pct.toFixed(0)}%</span></div>
+                  <div className="h-2 rounded-full bg-slate-200 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400" style={{ width: `${pct}%` }}/></div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">{group.students.map(s => <button key={s.id} onClick={() => onSelectStudent?.(s.id)} className="text-[10px] text-amber-800 hover:underline text-left">{s.name}</button>)}</div>
                 </div>;
-              })}
+              })}</div>}
+              {groups.length > 5 && <details className="mt-4 rounded-lg border border-slate-200 bg-white"><summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-700">Show {groups.length - 5} more distinct answers ({otherCount} responses)</summary><div className="space-y-3 border-t border-slate-100 p-3">{groups.slice(5).map(group => <div key={group.answer} className="text-xs"><div className="flex justify-between gap-3"><span>{group.answer}</span><b>{group.students.length} · {(group.students.length / answered * 100).toFixed(0)}%</b></div><div className="flex flex-wrap gap-2 mt-1">{group.students.map(s => <button key={s.id} onClick={() => onSelectStudent?.(s.id)} className="text-[10px] text-amber-800 hover:underline">{s.name}</button>)}</div></div>)}</div></details>}
+              <p className="mt-3 border-t border-slate-200 pt-2 text-[10px] text-slate-400">{questionLabel} · share of answered responses</p>
             </article>;
-          })}</div>}
+          })}</div>
         </details>;
       })}
+      {!shownQuestions.length && <p className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">No questions match these filters.</p>}
     </section>
   </div>;
 };

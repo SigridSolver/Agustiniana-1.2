@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
                 <span className="text-slate-600">·</span>
                 <span className="text-xs text-slate-400">
-                  {careersCount} Majors · {studentsCount} Students · {questionsCount} Questions
+                  {careersCount} Majors · {studentsCount} Participants · {questionsCount} Program Questions
                 </span>
               </div>
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">

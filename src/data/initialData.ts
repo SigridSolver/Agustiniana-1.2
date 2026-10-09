@@ -1,5 +1,5 @@
-import { InterviewedStudent, Interviewer, ProjectMetadata, Question } from '../types';
-import { additionalStudents, additionalPrograms } from './additionalPrograms';
+import type { InterviewedStudent, Interviewer, ProjectMetadata, Question } from '../types/index.ts';
+import { additionalStudents, additionalPrograms } from './additionalPrograms.ts';
 
 export const initialMetadata: ProjectMetadata = {
   university: 'UniAgustiniana - Universitaria Agustiniana',
@@ -8,11 +8,11 @@ export const initialMetadata: ProjectMetadata = {
   subject: 'Applied Sociolinguistics & Pedagogical Research',
   city: 'Bogotá D.C., Colombia',
   term: 'Academic Period 2026',
-  title: 'Academic Life, Aspirations and Campus Perceptions in Film & Television',
-  subtitle: 'A qualitative research fieldwork study: 8 structured interview questions administered to undergraduate students at UniAgustiniana Bogotá',
+  title: 'Academic Life, Aspirations and Campus Perceptions Across Degree Programs',
+  subtitle: 'A cross-program study of academic life, professional aspirations and campus experiences at UniAgustiniana Bogotá',
   generalObjective: 'To analyze student perceptions regarding their academic discipline, favorite subjects, campus spaces, internship opportunities, professional improvement, care for mascot Hugos, exchange destinations, and career practice.',
   methodologyType: 'Qualitative-descriptive survey and semi-structured English interview protocols with verbatim response analysis.',
-  sampleDescription: 'Verified multi-program fieldwork sample (59 real undergraduate students with official student codes across Film & Television, Architecture, Engineering, Hospitality & Tourism, Gastronomy, Law, and International Business), Campus Tagaste & Suba, Bogotá.'
+  sampleDescription: 'Program-specific participant rosters and responses, with simulated answers and English levels explicitly identified.'
 };
 
 export const initialInterviewers: Interviewer[] = [
@@ -21,7 +21,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Alejandra Cruz',
     role: 'Lead Student Researcher / Project Coordinator',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'a.cruz@uniagustiniana.edu.co',
     reflection: 'Interviewing students across diverse programs in English revealed how their disciplinary passions shape their vocabulary and global goals. Real communicative practice gave them the confidence to speak about their dreams, exchange goals, and campus life.'
@@ -31,47 +31,17 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Melany Casas',
     role: 'Lead Student Researcher / Fieldwork & Data Analyst',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'm.casas@uniagustiniana.edu.co',
     reflection: 'Working directly with the Cine y Televisión cohort showed that 100% of students cherish our campus green spaces and that language education must connect directly to real media channels like RCN, Caracol, Hollywood, and Netflix.'
-  },
-  {
-    id: 'int-3',
-    name: 'Paula Natalia Torres',
-    role: 'Co-Researcher / Interviewer',
-    program: 'Foreign Languages Degree',
-    semester: '5th Semester',
-    campus: 'Tagaste Campus',
-    email: 'p.torres@uniagustiniana.edu.co',
-    reflection: 'Conducting these interviews in English allowed us to observe how university students express their vocational passions and future aspirations. It proved that language teaching must connect with real workplace registers.'
-  },
-  {
-    id: 'int-4',
-    name: 'Andrés Felipe Calderón',
-    role: 'Co-Researcher / Data Analyst',
-    program: 'Foreign Languages Degree',
-    semester: '5th Semester',
-    campus: 'Tagaste Campus',
-    email: 'a.calderon@uniagustiniana.edu.co',
-    reflection: 'Listening to students talk about their internships, exchange desires, and caring for mascot Hugos showed a shared university identity that transcends individual faculties.'
-  },
-  {
-    id: 'int-5',
-    name: 'Laura Sofía Gómez',
-    role: 'Co-Researcher / Fieldwork Scribe',
-    program: 'Foreign Languages Degree',
-    semester: '5th Semester',
-    campus: 'Suba Campus',
-    email: 'l.gomez@uniagustiniana.edu.co',
-    reflection: 'The survey demonstrated that students have high aspirations to work with international streaming networks and production companies, underscoring the vital role of English fluency.'
   },
   {
     id: 'int-6',
     name: 'María Fernanda Rodríguez',
     role: 'Lead Student Researcher / Architecture Fieldwork',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'mf.rodriguez@uniagustiniana.edu.co',
     reflection: 'Investigating students in Architecture revealed their deep commitment to spatial design, physical model making, and urban sustainability. Connecting English communication with technical architectural terminology demonstrated the global exchange and professional goals of future architects.'
@@ -81,7 +51,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Helen Sofía Molina',
     role: 'Lead Student Researcher / Architecture Fieldwork & Data Analysis',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'hs.molina@uniagustiniana.edu.co',
     reflection: 'Interviewing the 8 architecture students showed their dedication to studio workshops and international aspirations to study in Spain, Japan, Germany, and the USA. English proficiency directly empowers their international mobility dreams.'
@@ -91,7 +61,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Jorge Bustos',
     role: 'Lead Student Researcher / Engineering Fieldwork',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'j.bustos@uniagustiniana.edu.co',
     reflection: 'Fieldwork research with the Engineering students demonstrated strong analytical passion for software architecture, coding flexibility, and international ambitions in tech enterprises, highlighting the critical role of English for global engineering careers.'
@@ -101,7 +71,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Andres Parra',
     role: 'Lead Student Researcher / Engineering Fieldwork & Data Analysis',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'a.parra@uniagustiniana.edu.co',
     reflection: 'Analyzing the 8 Engineering student responses showcased their interest in robotics, electronics, algorithm optimization, and ethical wildlife care for mascot Ugus. Fluency in technical English is their principal bridge to multinational tech giants.'
@@ -111,7 +81,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Valerin Sophia Conde Hernández',
     role: 'Lead Student Researcher / Hospitality & Tourism Fieldwork',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'vs.conde@uniagustiniana.edu.co',
     reflection: 'Fieldwork investigation with Tourism and Hospitality students highlighted the decisive role of bilingualism and customer empathy. Connecting English communication with etiquette, customer care, and international hotel management directly opens career pathways abroad.'
@@ -121,7 +91,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Tania Sarah Candela Ruiz',
     role: 'Lead Student Researcher / Hospitality & Tourism Fieldwork & Data Analysis',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'ts.candela@uniagustiniana.edu.co',
     reflection: 'Interviewing the 8 hospitality students revealed their high motivation for international mobility in Spain, Mexico, USA, and Canada, as well as hands-on training in ESUNA facilities. English fluency is their essential bridge to luxury resorts and global travel agencies.'
@@ -131,7 +101,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Ana Paula Manrique Mijares',
     role: 'Lead Student Researcher / Gastronomy Fieldwork Coordinator',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Suba & Tagaste Campuses',
     email: 'ap.manrique@uniagustiniana.edu.co',
     reflection: 'Fieldwork with Gastronomy students and Professor Katherine Avendaño revealed high passion for culinary arts, bakery, mixology, and international exchanges to France, Spain, and Mexico. Professional English empowers their culinary careers in global hospitality and cruise lines.'
@@ -141,7 +111,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Carol Tatiana Caro Montaño',
     role: 'Lead Student Researcher / Gastronomy Fieldwork & Data Analysis',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Suba & Tagaste Campuses',
     email: 'ct.caro@uniagustiniana.edu.co',
     reflection: 'Interviewing the 9 culinary students alongside their instructor highlighted the vital bridge between communicative English, international kitchen brigades, hospitality service standards, and campus awareness regarding mascot Ugus.'
@@ -151,7 +121,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Anamaria Rocha',
     role: 'Lead Student Researcher / Law Fieldwork Coordinator',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'a.rocha@uniagustiniana.edu.co',
     reflection: 'Conducting interviews with Law students demonstrated their high vocational dedication to social justice, constitutional rights, and human welfare. Connecting English language proficiency with legal terminology and international human rights law empowers future Colombian attorneys to engage with international courts and multilateral organizations.'
@@ -161,7 +131,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Sandra Lorena Salazar',
     role: 'Lead Student Researcher / Law Fieldwork & Data Analyst',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'sl.salazar@uniagustiniana.edu.co',
     reflection: 'Analyzing the 9 Law student responses highlighted a strong interest in constitutional debates, public sector institutions, and international mobility to Brazil, the United States, Spain, and Switzerland. Professional communicative English serves as their gateway to global jurisprudence and diplomatic careers.'
@@ -171,7 +141,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Isaac Pinilla',
     role: 'Lead Student Researcher / International Business Fieldwork Coordinator',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'i.pinilla@uniagustiniana.edu.co',
     reflection: 'Fieldwork research with International Business students revealed their high commitment to global markets, international logistics, and foreign languages. Mastering English is their decisive vehicle for corporate communication, multinational negotiations, and study abroad in Spain, the USA, and Europe.'
@@ -181,7 +151,7 @@ export const initialInterviewers: Interviewer[] = [
     name: 'Carlos Marin',
     role: 'Lead Student Researcher / International Business Fieldwork & Data Analyst',
     program: 'Foreign Languages Degree',
-    semester: '5th Semester',
+    semester: '1st Semester',
     campus: 'Tagaste Campus',
     email: 'c.marin@uniagustiniana.edu.co',
     reflection: 'Analyzing the 8 International Business student interviews underscored strong interest in digital marketing, foreign languages, and international trade operations. Over 60% of students prioritize improving their English daily to excel in multinational enterprises and global market entry.'
@@ -2554,6 +2524,7 @@ export interface CareerProgramData {
   faculty: string;
   campus: string;
   video: {
+    isPlaceholder?: boolean;
     title: string;
     embedUrl: string;
     externalUrl: string;

@@ -1,3 +1,4 @@
+import { metrics, questionsFor, careerNames } from '../data/research';
 import React from 'react';
 import { ProjectMetadata, Question, InterviewedStudent, Interviewer } from '../types';
 import { Printer, ArrowLeft } from 'lucide-react';
@@ -17,6 +18,9 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
   interviewers,
   onBack
 }) => {
+  const totals = metrics(students, questions);
+  const careers = careerNames(students).filter(career => students.some(s => s.career === career));
+  const reportQuestions = careers.flatMap(career => questionsFor(career, questions).map(question => ({ ...question, career })));
   const handlePrint = () => {
     window.print();
   };
@@ -96,10 +100,10 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
               <strong>General Objective:</strong> {metadata.generalObjective}
             </p>
             <p>
-              <strong>Methodology & Instrument:</strong> {metadata.methodologyType} (standardized question protocols applied to {students.length} students across Film &amp; Television, Architecture, Engineering, Hospitality &amp; Tourism, Gastronomy, Law, and International Business).
+              <strong>Methodology & Instrument:</strong> {metadata.methodologyType} ({totals.students} students and {totals.teachers} faculty across {totals.careers} programs; {totals.recordedAnswers} recorded and {totals.simulatedAnswers} simulated responses).
             </p>
             <p>
-              <strong>Research Teams:</strong> Alejandra Cruz &amp; Melany Casas (Film &amp; TV) · María Fernanda Rodríguez &amp; Helen Sofía Molina (Architecture) · Jorge Bustos &amp; Andres Parra (Engineering) · Valerin Sophia Conde &amp; Tania Sarah Candela (Hospitality &amp; Tourism) · Ana Paula Manrique &amp; Carol Tatiana Caro (Gastronomy) · Anamaria Rocha &amp; Sandra Lorena Salazar (Law) · Isaac Pinilla &amp; Carlos Marin (International Business) — Foreign Languages Degree.
+              <strong>Research Teams:</strong> {interviewers.map(member => member.name).join(' / ')} - 1st Semester, Foreign Languages Degree.
             </p>
           </div>
 
@@ -113,7 +117,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                   <th className="p-2 border border-slate-300">Interviewed Student</th>
                   <th className="p-2 border border-slate-300">Degree Program / Major</th>
                   <th className="p-2 border border-slate-300">Semester</th>
-                  <th className="p-2 border border-slate-300">Interviewer-Assessed Level (CEFR)</th>
+                  <th className="p-2 border border-slate-300">English Level (CEFR)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -124,7 +128,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                     <td className="p-2 border border-slate-300 font-medium">{st.name}</td>
                     <td className="p-2 border border-slate-300">{st.career}</td>
                     <td className="p-2 border border-slate-300">{st.semester}</td>
-                    <td className="p-2 border border-slate-300 font-semibold">{st.perceivedEnglishLevel}</td>
+                    <td className="p-2 border border-slate-300 font-semibold">{st.perceivedEnglishLevel}{st.englishLevelSource === 'simulated' ? ' (Simulated)' : ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -135,19 +139,19 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
         {/* Detailed Results by Question */}
         <div className="space-y-6 pt-4">
           <h2 className="text-base font-bold font-sans uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
-            2. Qualitative Fieldwork Results by Question ({questions.length} Items)
+            2. Qualitative Fieldwork Results by Question ({reportQuestions.length} Program-Specific Items)
           </h2>
 
           <div className="space-y-6">
-            {questions.map((q) => (
-              <div key={q.id} className="space-y-2 border-b border-slate-200 pb-4">
+            {reportQuestions.map((q) => (
+              <div key={`${q.career}-${q.id}`} className="space-y-2 border-b border-slate-200 pb-4">
                 <div className="flex items-start gap-2">
                   <span className="font-sans font-bold text-xs bg-slate-900 text-white px-2 py-0.5 rounded shrink-0">
                     {q.code}
                   </span>
                   <div>
                     <h3 className="text-sm font-bold font-sans text-slate-900 leading-snug">
-                      {q.title}
+                      {q.career.split(' (')[0]} ? {q.title}
                     </h3>
                     <p className="text-[11px] font-sans text-slate-500 italic">
                       Category: {q.category} · Objective: {q.academicObjective}
@@ -156,7 +160,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                 </div>
 
                 <div className="bg-amber-50/50 p-2.5 rounded border border-amber-200 text-xs font-sans text-amber-950">
-                  <strong>Pattern synthesis:</strong> {q.summaryInsight}
+                  <strong>Original source synthesis:</strong> {q.summaryInsight}
                 </div>
 
                 {/* Answers Table */}
@@ -164,11 +168,11 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                   <thead className="bg-slate-50 text-slate-700">
                     <tr>
                       <th className="p-2 border border-slate-200 w-1/3">Student & Code</th>
-                      <th className="p-2 border border-slate-200">Verbatim Recorded Answer</th>
+                      <th className="p-2 border border-slate-200">Response (Source Labeled)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
-                    {students.map((st) => (
+                    {students.filter(st => st.career === q.career).map((st) => (
                       <tr key={st.id}>
                         <td className="p-2 border border-slate-200 align-top font-semibold text-slate-900">
                           <div>{st.name}</div>
@@ -180,7 +184,7 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
                           </div>
                         </td>
                         <td className="p-2 border border-slate-200 text-slate-700 italic leading-relaxed">
-                          "{st.answers[q.id] || 'Answer not recorded.'}"
+                          {st.simulatedAnswerIds?.includes(q.id) && <strong className="block">Simulated response</strong>}"{st.answers[q.id] || 'Answer not recorded.'}"
                         </td>
                       </tr>
                     ))}
@@ -198,17 +202,9 @@ export const PrintReportView: React.FC<PrintReportViewProps> = ({
           </h2>
           <div className="text-xs font-sans text-slate-700 space-y-2 leading-relaxed">
             <p>
-              1. <strong>Disciplinary Motivation:</strong> Photography (63%) and specialized equipment spaces (37%) represent the primary vocation driver for Film and Television undergraduates at UniAgustiniana.
+              <strong>Coverage:</strong> {totals.answers} responses across {totals.careers} programs; {totals.missing} applicable answers missing.
             </p>
-            <p>
-              2. <strong>Institutional Attachment:</strong> Unanimous 100% agreement on Campus Tagaste’s green areas demonstrates strong spatial well-being and outdoor learning affinity.
-            </p>
-            <p>
-              3. <strong>Industry Linkage:</strong> 100% student targeting of major national television networks (RCN and Caracol TV) underscores the necessity of workplace-grounded professional English registers.
-            </p>
-            <p>
-              4. <strong>Global Vision:</strong> 75% international mobility desire toward the USA, Hollywood, and Mexico confirms students' aspiration for high-level international production pipelines.
-            </p>
+            <p><strong>Data interpretation:</strong> Simulated responses and English levels are illustrative examples and must not be interpreted as measured findings. Original source summaries are retained separately.</p>
           </div>
         </div>
 

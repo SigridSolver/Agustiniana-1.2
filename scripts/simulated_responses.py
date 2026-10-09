@@ -1,0 +1,43 @@
+"""Illustrative answers requested by the project owner; not interview evidence."""
+
+RESPONSES = {
+    'marketing': [
+        ['I enjoy understanding why customers choose one brand over another.', 'I like designing advertising campaigns that connect with people.', 'I enjoy learning how brands communicate on social media.'],
+        ['My favorite subject is Digital Marketing.', 'I enjoy Consumer Behavior because it explains purchasing decisions.', 'Advertising is my favorite subject because I can develop creative ideas.'],
+        ['I like the cafeteria because I can discuss projects with my classmates.', 'The green areas are my favorite place to relax between classes.', 'I like the library because it is a quiet place to research brands.'],
+        ['Having several campaign assignments due in the same week is challenging.', 'I find it difficult to balance group projects and individual homework.', 'Preparing presentations under tight deadlines can be stressful.'],
+        ['I can plan social media campaigns and write content for a local business.', 'I can analyze customer surveys and prepare a market research report.', 'I can help an advertising agency develop a brand campaign.'],
+        ['I can practice public speaking and learn how to present a campaign clearly.', 'I can improve my English and learn to use digital analytics tools.', 'I can study successful brands and practice designing creative content.'],
+        ['I would like to support fourth-semester workshops on advertising.', 'I would choose fifth semester because students can work on complete campaigns.', 'I would like to share practical marketing examples with fourth-semester students.'],
+        ['I can keep the campus clean and use recycling bins.', 'I can respect shared spaces and take care of classroom equipment.', 'I can encourage classmates to save water and reduce paper waste.'],
+        ['I would like to go to Spain to learn about international marketing.', 'I would choose Mexico to study advertising and consumer culture.', 'I would like to study in Canada and improve my English.'],
+        ['I could work in an advertising agency as a campaign assistant.', 'I would like to work in a company marketing department.', 'I could work as a social media manager for a growing business.'],
+        ['I could study Business Administration to understand company management.', 'I would like to study Social Communication to improve my storytelling.', 'I would consider Graphic Design to strengthen my creative skills.'],
+    ],
+    'communication': [
+        ['I enjoy telling stories that help people understand their community.', 'I like learning how media influence public opinion.', 'I enjoy creating audiovisual content and communicating new ideas.'],
+        ['My favorite subject is Photography because I can tell stories through images.', 'I enjoy Radio Production because I like working with sound and interviews.', 'My favorite subject is Journalism because I enjoy researching stories.'],
+        ['I like spending time with my friends in the green areas.', 'I enjoy the audiovisual spaces where we can practice with cameras.', 'The cafeteria is my favorite place to meet classmates and discuss projects.'],
+        ['Preparing classes and giving detailed feedback would require a lot of time.', 'I think managing a heavy workload would be the most difficult part of teaching.', 'Being patient and explaining the same concept in different ways can be challenging.'],
+        ['I can take photographs and prepare a visual story for a class project.', 'I can record interviews and edit a short video report.', 'I can use cameras and microphones to produce educational media.'],
+        ['I can practice writing news stories and verify information carefully.', 'I can improve my public speaking and practice interviewing people.', 'I can learn more about video editing and improve my English.'],
+        ['I would like to teach fourth semester, when students begin larger media projects.', 'I would prefer fifth semester to share practical production techniques.', 'I would choose fourth semester for introductory photography workshops.'],
+        ['I can keep the flag clean and handle it respectfully.', 'I can store the flag properly and avoid damaging it.', 'I can encourage respectful use of the flag during university activities.'],
+        ['I would like to go to Spain to learn about journalism and media.', 'I would choose Argentina to explore radio and audiovisual production.', 'I would like to go to Canada to improve my English and study communication.'],
+        ['I could work as a reporter for a television channel.', 'I would like to work in radio production or podcasting.', 'I could create digital content for a social media agency.'],
+        ['I could study Marketing to understand audiences and brand communication.', 'I would consider Film and Television to develop my production skills.', 'I would like to study Photography in more depth.'],
+    ],
+    'languages': [
+        ['I enjoy learning languages and helping other people communicate.', 'I like discovering cultures and developing skills to become a teacher.', 'I enjoy improving my English and sharing what I learn with classmates.'],
+        ['My favorite subject is Pedagogy because it helps me understand learning.', 'I enjoy English because I can practice speaking and listening.', 'My favorite subject is Didactics because I can design classroom activities.'],
+        ['The grass and green fields are my favorite places to relax.', 'I like the library because I can read and prepare teaching activities.', 'I enjoy the open fields where I can spend time with classmates.'],
+        ['Preparing inclusive lessons requires patience and careful planning.', 'Managing time for lesson preparation and feedback can be challenging.', 'It can be difficult to keep every learner motivated during a class.'],
+        ['I can plan an English lesson and support a teacher in the classroom.', 'I can create vocabulary games and practice explaining instructions.', 'I can observe classes and adapt activities for different learning needs.'],
+        ['I can practice English daily and learn from feedback on my lessons.', 'I can read about pedagogy and reflect on my classroom experiences.', 'I can practice speaking and develop new teaching materials.'],
+        ['I would like to begin teaching practice in fourth semester with supervision.', 'I would prefer fifth semester, after learning more about lesson planning.', 'I would like to support introductory classes while gaining experience gradually.'],
+        ['I can respect Agus, keep the campus clean and avoid disturbing the mascot.', 'I can protect the mascot habitat and encourage classmates to be respectful.', 'I can avoid leaving litter and follow the university guidance for mascot care.'],
+        ['I would like to study in Canada to improve my English and learn about education.', 'I would like to go to the United Kingdom to experience a different culture.', 'I would choose Spain to learn about language teaching and exchange ideas.'],
+        ['I could teach English in a school.', 'I would like to work at a language institute.', 'I could design learning materials and teach in an educational organization.'],
+        ['I could study Psychology in the future to understand how people learn.', 'I would focus on my current degree before considering another program.', 'I could consider Translation if I can organize my study time well.'],
+    ],
+}

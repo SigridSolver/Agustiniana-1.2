@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { additionalStudents } from './data/additionalPrograms';
+import React, { useState, useEffect } from 'react';
+import { migrateStudents, normalizeTeam, readSaved, metrics, questionsFor, careerNames } from './data/research';
 import { 
   initialMetadata, 
   initialQuestions, 
   initialStudents, 
   initialInterviewers,
-  analyticalInsights,
   universityCareersList,
   careerProgramsRegistry
 } from './data/initialData';
@@ -24,26 +23,22 @@ import { DataManagementView } from './components/DataManagementView';
 import { PrintReportView } from './components/PrintReportView';
 
 export default function App() {
-  // Load data from localStorage (v12 key ensures fresh verified dataset with International Business, Law Survey Results, and 59 real student participants)
+  // Migrate existing browser data without discarding participant edits.
   const [metadata, setMetadata] = useState<ProjectMetadata>(() => {
-    const saved = localStorage.getItem('uniagustiniana_meta_v12');
-    return saved ? JSON.parse(saved) : initialMetadata;
+    const saved = readSaved('uniagustiniana_meta_v12', initialMetadata);
+    return saved.title === 'Academic Life, Aspirations and Campus Perceptions in Film & Television' ? { ...saved, title: initialMetadata.title, subtitle: initialMetadata.subtitle, sampleDescription: initialMetadata.sampleDescription } : saved;
   });
 
   const [questions, setQuestions] = useState<Question[]>(() => {
-    const saved = localStorage.getItem('uniagustiniana_questions_v12');
-    return saved ? JSON.parse(saved) : initialQuestions;
+    return readSaved('uniagustiniana_questions_v12', initialQuestions);
   });
 
   const [students, setStudents] = useState<InterviewedStudent[]>(() => {
-    const saved = localStorage.getItem('uniagustiniana_students_v12');
-    const existing: InterviewedStudent[] = saved ? JSON.parse(saved) : initialStudents;
-    return [...existing, ...additionalStudents.filter((added) => !existing.some((student) => student.id === added.id || student.studentCode === added.studentCode))];
+    return readSaved('uniagustiniana_students_v13', migrateStudents(readSaved('uniagustiniana_students_v12', initialStudents)));
   });
 
   const [interviewers, setInterviewers] = useState<Interviewer[]>(() => {
-    const saved = localStorage.getItem('uniagustiniana_interviewers_v12');
-    return saved ? JSON.parse(saved) : initialInterviewers;
+    return normalizeTeam(readSaved('uniagustiniana_interviewers_v13', readSaved('uniagustiniana_interviewers_v12', initialInterviewers)));
   });
 
   const [activeTab, setActiveTab] = useState<ViewTab>('summary');
@@ -52,6 +47,14 @@ export default function App() {
   const [selectedStudentId, setSelectedStudentId] = useState<string>(students[0]?.id || 'cin-1');
   const [selectedCareer, setSelectedCareer] = useState<string>('Film and Television (Cine y Televisión)');
   const [isPrintMode, setIsPrintMode] = useState<boolean>(false);
+  const totals = metrics(students, questions);
+  const programs = careerNames(students);
+  const questionnaireCount = programs.filter(career => students.some(s => s.career === career)).reduce((sum, career) => sum + questionsFor(career, questions).length, 0);
+
+  useEffect(() => {
+    localStorage.setItem('uniagustiniana_students_v13', JSON.stringify(students));
+    localStorage.setItem('uniagustiniana_interviewers_v13', JSON.stringify(interviewers));
+  }, [students, interviewers]);
 
   // Persistence handler
   const handleSaveData = (
@@ -63,12 +66,12 @@ export default function App() {
     setMetadata(newMetadata);
     setQuestions(newQuestions);
     setStudents(newStudents);
-    setInterviewers(newInterviewers);
+    setInterviewers(normalizeTeam(newInterviewers));
 
     localStorage.setItem('uniagustiniana_meta_v12', JSON.stringify(newMetadata));
     localStorage.setItem('uniagustiniana_questions_v12', JSON.stringify(newQuestions));
-    localStorage.setItem('uniagustiniana_students_v12', JSON.stringify(newStudents));
-    localStorage.setItem('uniagustiniana_interviewers_v12', JSON.stringify(newInterviewers));
+    localStorage.setItem('uniagustiniana_students_v13', JSON.stringify(newStudents));
+    localStorage.setItem('uniagustiniana_interviewers_v13', JSON.stringify(newInterviewers));
   };
 
   const handleResetData = () => {
@@ -76,11 +79,13 @@ export default function App() {
       setMetadata(initialMetadata);
       setQuestions(initialQuestions);
       setStudents(initialStudents);
-      setInterviewers(initialInterviewers);
+      setInterviewers(normalizeTeam(initialInterviewers));
 
       localStorage.removeItem('uniagustiniana_meta_v12');
       localStorage.removeItem('uniagustiniana_questions_v12');
+      localStorage.removeItem('uniagustiniana_students_v13');
       localStorage.removeItem('uniagustiniana_students_v12');
+      localStorage.removeItem('uniagustiniana_interviewers_v13');
       localStorage.removeItem('uniagustiniana_interviewers_v12');
     }
   };
@@ -95,9 +100,7 @@ export default function App() {
 
     const newStudentId = `st-${Date.now()}`;
     const defaultAnswers: { [key: number]: string } = {};
-    questions.forEach((q) => {
-      defaultAnswers[q.id] = `Student response for ${q.code} regarding ${q.category.toLowerCase()}.`;
-    });
+    questionsFor(targetCareer, questions).forEach((q) => { defaultAnswers[q.id] = ''; });
 
     const sampleColors = [
       'bg-blue-600',
@@ -121,15 +124,15 @@ export default function App() {
       semester: `${Math.min(currentCount + 3, 8)}th Semester`,
       campus: targetCareer.includes('Gastronomía') ? 'Suba Campus' : 'Tagaste Campus',
       age: 20 + (currentCount % 4),
-      highlightQuote: 'Communicating effectively in English allows us to share Colombian research and creative insights with global academia.',
-      perceivedEnglishLevel: currentCount % 2 === 0 ? 'B1 - Intermediate' : 'B2 - Upper Intermediate',
+      highlightQuote: 'Individual response not provided.',
+      perceivedEnglishLevel: 'Not assessed',
       answers: defaultAnswers,
       avatarColor: sampleColors[currentCount % sampleColors.length]
     };
 
     const updatedStudents = [...students, newStudent];
     setStudents(updatedStudents);
-    localStorage.setItem('uniagustiniana_students_v12', JSON.stringify(updatedStudents));
+    localStorage.setItem('uniagustiniana_students_v13', JSON.stringify(updatedStudents));
     setSelectedStudentId(newStudentId);
     setSelectedCareer(targetCareer);
   };
@@ -146,7 +149,7 @@ export default function App() {
   };
 
   const handleSelectQuestion = (questionId: number, career?: string) => {
-    setQuestionCareer(career || null);
+    setQuestionCareer(career || selectedCareer);
     setSelectedQuestionId(questionId);
     setActiveTab('questions');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -173,7 +176,7 @@ export default function App() {
         onTabChange={setActiveTab}
         onPrintReport={() => setIsPrintMode(true)}
         onOpenEditor={() => setActiveTab('editor')}
-        questionsCount={questions.length}
+        questionsCount={questionnaireCount}
         studentsCount={students.length}
         careersCount={universityCareersList.length}
       />
@@ -182,7 +185,8 @@ export default function App() {
       <Navigation
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        questionsCount={questions.length}
+        questionsCount={questionnaireCount}
+        answersCount={totals.answers}
         studentsCount={students.length}
         careersCount={universityCareersList.length}
       />
@@ -194,7 +198,8 @@ export default function App() {
             metadata={metadata}
             questions={questions}
             students={students}
-            insights={analyticalInsights}
+            interviewers={interviewers}
+            onSelectCareer={(career) => { setSelectedCareer(career); setActiveTab('careers'); }}
             onSelectStudent={handleSelectStudent}
             onSelectQuestion={handleSelectQuestion}
             onGoToAnalytics={() => setActiveTab('analytics')}
@@ -227,16 +232,22 @@ export default function App() {
 
         {activeTab === 'questions' && (
           <>
+          <label className="block bg-white rounded-xl border border-slate-200 p-4 mb-4 text-sm font-semibold">Degree program
+            <select className="block w-full border border-slate-300 rounded-lg p-2 mt-2" value={questionCareer || selectedCareer} onChange={e => { setQuestionCareer(e.target.value); setSelectedQuestionId(questionsFor(e.target.value, questions)[0]?.id || 1); }}>
+              {programs.map(career => <option key={career} value={career}>{career}</option>)}
+            </select>
+          </label>
           {questionCareer && careerProgramsRegistry[questionCareer]?.sharedAnswers && (
             <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6 space-y-2">
-              <h2 className="font-bold">{questionCareer} · Program-Level Response</h2>
+              <h2 className="font-bold">{questionCareer} · Original Program-Level Response</h2>
               <p className="text-sm">{careerProgramsRegistry[questionCareer].sharedAnswers?.[selectedQuestionId]}</p>
               <p className="text-xs text-slate-500">{careerProgramsRegistry[questionCareer].sourceNote}</p>
             </div>
           )}
           <QuestionDetailView
-            questions={questionCareer ? careerProgramsRegistry[questionCareer]?.questions || questions : questions}
-            students={questionCareer ? students.filter((student) => student.career === questionCareer) : students}
+            key={questionCareer || selectedCareer}
+            questions={questionsFor(questionCareer || selectedCareer, questions)}
+            students={students.filter((student) => student.career === (questionCareer || selectedCareer))}
             selectedQuestionId={selectedQuestionId}
             onSelectQuestionId={setSelectedQuestionId}
             onSelectStudent={handleSelectStudent}
@@ -304,9 +315,9 @@ export default function App() {
           <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400">
             <span>{universityCareersList.length} University Majors</span>
             <span aria-hidden="true">·</span>
-            <span>{students.length} Verified Interviewees (Film, Arch &amp; Eng)</span>
+            <span>{totals.students} Students · {totals.teachers} Faculty</span>
             <span aria-hidden="true">·</span>
-            <span>{questions.length} Structured Questions</span>
+            <span>{totals.answers} Responses · {totals.simulatedAnswers} Simulated</span>
             <span aria-hidden="true">·</span>
             <button
               onClick={() => setIsPrintMode(true)}

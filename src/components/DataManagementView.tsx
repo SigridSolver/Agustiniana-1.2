@@ -1,3 +1,4 @@
+import { questionsFor } from '../data/research';
 import React, { useState } from 'react';
 import { ProjectMetadata, Question, InterviewedStudent, Interviewer } from '../types';
 import { 
@@ -282,6 +283,7 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
                   onChange={(e) => handleStudentFieldChange('campus', e.target.value)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-hidden focus:border-slate-400 font-medium"
                 >
+                  <option value="Not provided">Not provided</option>
                   <option value="Tagaste Campus">Tagaste Campus</option>
                   <option value="Suba Campus">Suba Campus</option>
                 </select>
@@ -313,13 +315,14 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Interviewer-Assessed English Level (CEFR):
+                  English Level (CEFR; simulated examples remain labeled):
                 </label>
                 <select
                   value={currentStudents[selectedStudentIndex].perceivedEnglishLevel}
                   onChange={(e) => handleStudentFieldChange('perceivedEnglishLevel', e.target.value)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-hidden focus:border-slate-400 font-medium"
                 >
+                  <option value="Not assessed">Not assessed</option>
                   <option value="A1 - Beginner">A1 - Beginner</option>
                   <option value="A2 - Elementary">A2 - Elementary</option>
                   <option value="B1 - Intermediate">B1 - Intermediate</option>
@@ -331,14 +334,15 @@ export const DataManagementView: React.FC<DataManagementViewProps> = ({
             {/* Individual Responses inputs */}
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <h4 className="font-bold text-xs uppercase tracking-wider text-amber-800">
-                Edit the {currentQuestions.length} Individual Answers from this Student:
+                Edit the {questionsFor(currentStudents[selectedStudentIndex].career, currentQuestions).length} Individual Answers from this Participant:
               </h4>
 
-              {currentQuestions.map((q) => (
+              {questionsFor(currentStudents[selectedStudentIndex].career, currentQuestions).map((q) => (
                 <div key={q.id} className="space-y-1">
                   <label className="block text-xs font-semibold text-slate-800">
                     <span className="text-amber-700 font-bold mr-1">[{q.code}]</span>
                     {q.title}
+                    {currentStudents[selectedStudentIndex].simulatedAnswerIds?.includes(q.id) && <span className="text-violet-700 ml-2">Simulated response</span>}
                   </label>
                   <textarea
                     rows={2}

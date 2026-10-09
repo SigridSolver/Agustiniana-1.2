@@ -16,6 +16,7 @@ interface NavigationProps {
   activeTab: ViewTab;
   onTabChange: (tab: ViewTab) => void;
   questionsCount: number;
+  answersCount: number;
   studentsCount: number;
   careersCount: number;
 }
@@ -24,6 +25,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   activeTab,
   onTabChange,
   questionsCount,
+  answersCount,
   studentsCount,
   careersCount
 }) => {
@@ -56,13 +58,13 @@ export const Navigation: React.FC<NavigationProps> = ({
       id: 'students' as ViewTab,
       label: 'By Student',
       icon: Users2,
-      badge: `${studentsCount} students`
+      badge: `${studentsCount} participants`
     },
     {
       id: 'matrix' as ViewTab,
       label: 'Full Matrix',
       icon: Table2,
-      badge: `${questionsCount * studentsCount} answers`
+      badge: `${answersCount} answers`
     },
     {
       id: 'team' as ViewTab,

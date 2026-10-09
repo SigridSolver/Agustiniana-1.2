@@ -20,6 +20,8 @@ export interface Question {
 }
 
 export interface InterviewedStudent {
+  simulatedAnswerIds?: number[];
+  englishLevelSource?: 'simulated' | 'assessed';
   id: string;
   name: string;
   studentCode: string;

@@ -33,7 +33,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
             Student Researchers & Authors of the Study
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Fieldwork investigation conducted by student researchers across academic faculties: Film &amp; Television cohort led by <strong>Alejandra Cruz</strong> &amp; <strong>Melany Casas</strong>, Architecture cohort led by <strong>María Fernanda Rodríguez</strong> &amp; <strong>Helen Sofía Molina</strong>, Engineering cohort led by <strong>Jorge Bustos</strong> &amp; <strong>Andres Parra</strong>, Hospitality &amp; Tourism cohort led by <strong>Valerin Sophia Conde Hernández</strong> &amp; <strong>Tania Sarah Candela Ruiz</strong>, Gastronomy cohort led by <strong>Ana Paula Manrique</strong> &amp; <strong>Carol Tatiana Caro</strong>, Law cohort led by <strong>Anamaria Rocha</strong> &amp; <strong>Sandra Lorena Salazar</strong>, and International Business cohort led by <strong>Isaac Pinilla</strong> &amp; <strong>Carlos Marin</strong> as part of the <strong>{metadata.program}</strong> at <strong>{metadata.university}</strong> (Bogotá, Colombia). This exploratory study connects pedagogical training with authentic academic realities.
+            Research conducted by {interviewers.length} first-semester students in the {metadata.program} at {metadata.university}. The team covers all participating degree programs listed in this application.
           </p>
         </div>
       </div>
@@ -110,7 +110,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
 
               <div className="pt-3 mt-4 border-t border-slate-100 flex items-center gap-1 text-xs text-slate-500">
                 <Mail className="w-3.5 h-3.5 text-slate-400" />
-                <span className="truncate">{member.email}</span>
+                <span className="truncate">{member.email || 'Email not provided'}</span>
               </div>
             </div>
           );
@@ -132,14 +132,14 @@ export const TeamView: React.FC<TeamViewProps> = ({
             <div className="space-y-1">
               <span className="font-semibold text-slate-900 block">1. Research Instrument Design:</span>
               <p className="text-slate-600 leading-relaxed">
-                8 standardized questions designed to explore vocational motivation, course satisfaction, spatial attachment, internship realities (RCN/Caracol), mascot care, and internationalization.
+                Program-specific questionnaires explore academic motivation, campus experiences, professional practice and international exchange.
               </p>
             </div>
 
             <div className="space-y-1">
               <span className="font-semibold text-slate-900 block">2. Fieldwork Execution:</span>
               <p className="text-slate-600 leading-relaxed">
-                Interviews conducted on Campus Tagaste, UniAgustiniana, with student consent, verbatim transcription, and qualitative assessment of communicative English proficiency.
+                Original program summaries and participant rosters are retained. Individually generated examples are labeled as simulated.
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
             <div className="space-y-1">
               <span className="font-semibold text-slate-900 block">Academic Integrity:</span>
               <p className="text-slate-600 leading-relaxed">
-                Conducted within the curricular framework of the Bachelor’s Degree in Foreign Languages at Universitaria Agustiniana. All responses represent authentic, unedited student testimonies.
+                Conducted within the curricular framework of the Bachelor’s Degree in Foreign Languages at Universitaria Agustiniana. Simulated responses and English levels are identified separately from source records.
               </p>
             </div>
 

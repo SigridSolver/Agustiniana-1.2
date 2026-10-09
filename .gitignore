@@ -7,3 +7,4 @@ coverage/
 .env*
 !.env.example
 .github-push/
+__pycache__/

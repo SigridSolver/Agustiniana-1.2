@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { InterviewedStudent, Question } from '../types';
 import { careerProgramsRegistry } from '../data/initialData';
+import { questionsFor, careerNames } from '../data/research';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -33,23 +34,15 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
   onSelectQuestion
 }) => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [careerFilter, setCareerFilter] = useState<'all' | 'film' | 'architecture' | 'engineering' | 'tourism' | 'gastronomy' | 'law'>('all');
+  const [careerFilter, setCareerFilter] = useState<string>('all');
 
   const currentStudent = students.find((s) => s.id === selectedStudentId) || students[0];
   const currentIndex = students.findIndex((s) => s.id === selectedStudentId);
 
-  const displayStudents = students.filter((s) => {
-    if (careerFilter === 'film') return s.career.includes('Cine');
-    if (careerFilter === 'architecture') return s.career.includes('Arquitectura');
-    if (careerFilter === 'engineering') return s.career.includes('Ingenier');
-    if (careerFilter === 'tourism') return s.career.includes('Hotelería') || s.career.includes('Hospitality');
-    if (careerFilter === 'gastronomy') return s.career.includes('Gastronom');
-    if (careerFilter === 'law') return s.career.includes('Derecho') || s.career.includes('Law');
-    return true;
-  });
+  const displayStudents = students.filter(s => careerFilter === 'all' || s.career === careerFilter);
 
   const programData = currentStudent ? careerProgramsRegistry[currentStudent.career] : null;
-  const studentQuestions = programData?.questions || questions;
+  const studentQuestions = questionsFor(currentStudent?.career || '', questions);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -81,77 +74,11 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
           <div className="flex items-center gap-2">
             <span className="font-semibold text-slate-700">Interviewed Students ({students.length} Total):</span>
             <div className="flex items-center gap-1">
-              <button
-                onClick={() => setCareerFilter('all')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  careerFilter === 'all'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                All ({students.length})
-              </button>
-              <button
-                onClick={() => setCareerFilter('film')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  careerFilter === 'film'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Film &amp; TV (8)
-              </button>
-              <button
-                onClick={() => setCareerFilter('architecture')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  careerFilter === 'architecture'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Architecture (8)
-              </button>
-              <button
-                onClick={() => setCareerFilter('engineering')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  careerFilter === 'engineering'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Engineering (8)
-              </button>
-              <button
-                onClick={() => setCareerFilter('tourism')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
-                  careerFilter === 'tourism'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Tourism (8)
-              </button>
-              <button
-                onClick={() => setCareerFilter('gastronomy')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
-                  careerFilter === 'gastronomy'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                <span>Gastronomy (10)</span>
-              </button>
-              <button
-                onClick={() => setCareerFilter('law')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
-                  careerFilter === 'law'
-                    ? 'bg-slate-900 text-amber-400 font-bold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                <span>Law (9)</span>
-              </button>
-            </div>
+              <select aria-label="Filter participants by degree program" value={careerFilter} onChange={e => setCareerFilter(e.target.value)} className="border border-slate-300 rounded-lg p-2 text-xs max-w-full">
+              <option value="all">All degree programs</option>
+              {careerNames(students).map(career => <option key={career} value={career}>{career.split(' (')[0]}</option>)}
+            </select>
+          </div>
           </div>
           <span>Student {currentIndex + 1} of {students.length}</span>
         </div>
@@ -294,9 +221,9 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Interviewer-Assessed Level:</span>
+                <span className="text-slate-400">English Level (CEFR):</span>
                 <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-0.5 rounded font-bold">
-                  {currentStudent.perceivedEnglishLevel}
+                  {currentStudent.perceivedEnglishLevel}{currentStudent.englishLevelSource === 'simulated' ? ' - Simulated' : ''}
                 </span>
               </div>
             </div>
@@ -343,20 +270,20 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="text-base font-bold text-slate-900">
-                {programData?.sharedAnswers ? 'Program-Level Fieldwork Responses' : 'Complete Fieldwork Interview Dossier'} ({studentQuestions.length} Questions)
+                Complete Participant Response Dossier ({studentQuestions.length} Questions)
               </h3>
               <p className="text-xs text-slate-500">
                 {programData?.sourceNote || `Faithful transcription and categorization of answers provided by ${currentStudent.name} (ID: ${currentStudent.studentCode})`}
               </p>
             </div>
             <span className="text-xs text-slate-500 font-medium bg-slate-100 px-2.5 py-1 rounded">
-              {programData?.sharedAnswers ? `${studentQuestions.length} program-level responses` : `${Object.keys(currentStudent.answers).length} of ${studentQuestions.length} questions completed`}
+              {studentQuestions.filter(q => currentStudent.answers[q.id]?.trim()).length} of {studentQuestions.length} questions completed
             </span>
           </div>
 
           <div className="space-y-4">
             {studentQuestions.map((question) => {
-              const answer = programData?.sharedAnswers?.[question.id] || currentStudent.answers[question.id] || 'Answer not recorded.';
+              const answer = currentStudent.answers[question.id] || 'Answer not recorded.';
               return (
                 <div
                   key={question.id}
@@ -387,7 +314,7 @@ export const StudentProfileView: React.FC<StudentProfileViewProps> = ({
                   </div>
 
                   <div className="mt-3 pl-8 text-xs text-slate-700 leading-relaxed border-l-2 border-slate-300">
-                    "{answer}"
+                    {currentStudent.simulatedAnswerIds?.includes(question.id) && <span className="block text-violet-700 font-semibold mb-1">Simulated response</span>}"{answer}"
                   </div>
                 </div>
               );

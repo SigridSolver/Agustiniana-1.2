@@ -14,9 +14,11 @@ function Invoke-Git {
 # Start from the remote default branch, preserving the repository's history.
 New-Item -ItemType Directory -Path (Split-Path -Parent $checkoutRoot) -Force | Out-Null
 Invoke-Git -GitArguments @('clone', $repositoryUrl, $checkoutRoot)
+Invoke-Git -GitArguments @('-C', $checkoutRoot, 'config', 'user.name', 'SigridSolver')
+Invoke-Git -GitArguments @('-C', $checkoutRoot, 'config', 'user.email', 'db9901126@gmail.com')
 
 $projectPaths = @(
-    'src', 'scripts', '.gitignore', '.env.example', 'index.html',
+    'src', 'scripts', 'tests', '.gitignore', '.env.example', 'index.html',
     'metadata.json', 'package.json', 'tsconfig.json', 'vite.config.ts',
     'Mercadeo.txt', 'Comunicacion social.txt', 'Licenciatura en lenguas extranjeras.md'
 )
@@ -45,7 +47,7 @@ try {
         return
     }
     if ($diffResult -ne 1) { throw 'Unable to inspect staged changes.' }
-    Invoke-Git -GitArguments @('commit', '-m', 'Add Marketing, Social Communication and Foreign Languages fieldwork')
+    Invoke-Git -GitArguments @('commit', '-m', 'Synchronize research dashboards, participant data and first-semester team')
     Invoke-Git -GitArguments @('push', 'origin', 'HEAD')
     Write-Host "Push completed: $repositoryUrl"
 } finally {

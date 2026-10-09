@@ -13,6 +13,57 @@ interface AnalyticsViewProps {
 
 const shortCareer = (career: string) => career.split(' (')[0];
 
+interface FocusGroup { label: string; students: InterviewedStudent[]; color: string; }
+
+function filmFocusDistribution(students: InterviewedStudent[], questionId: number): FocusGroup[] {
+  const rules: Record<number, Array<{ label: string; color: string; matches: (answer: string) => boolean }>> = {
+    3: [
+      { label: 'Campus green areas', color: '#059669', matches: answer => /green area|green space|garden|grass|lawn/i.test(answer) },
+      { label: 'Other campus choices', color: '#64748b', matches: () => true },
+    ],
+    6: [
+      { label: 'Protect Hugos’ habitat and green spaces', color: '#059669', matches: answer => /take care|protect|habitat|green|water|clean|food|respect|safe|peaceful/i.test(answer) },
+      { label: 'Have not encountered Hugos', color: '#64748b', matches: answer => /haven.t\s+(?:seen|encounter)|have not\s+(?:seen|encounter)|not\s+(?:seen|encounter)|never\s+seen/i.test(answer) },
+      { label: 'Other care responses', color: '#f59e0b', matches: () => true },
+    ],
+    7: [
+      { label: 'USA / Hollywood', color: '#2563eb', matches: answer => /united states|\busa\b|u\.s\.a|hollywood/i.test(answer) },
+      { label: 'Mexico', color: '#059669', matches: answer => /mexico/i.test(answer) },
+      { label: 'Remain in Colombia', color: '#f59e0b', matches: answer => /colombia|bog[oó]ta|stay|remain|prefer.{0,20}(?:here|local)/i.test(answer) },
+      { label: 'No / undecided', color: '#7c3aed', matches: answer => /\bno\b|not for now|undecided/i.test(answer) },
+      { label: 'Other / undecided', color: '#64748b', matches: () => true },
+    ],
+  };
+  const categories = rules[questionId] || [];
+  const grouped = categories.map(category => ({ label: category.label, color: category.color, students: [] as InterviewedStudent[] }));
+  for (const student of students) {
+    const answer = student.answers[questionId]?.trim();
+    if (!answer) continue;
+    const index = categories.findIndex(category => category.matches(answer));
+    if (index >= 0) grouped[index].students.push(student);
+  }
+  return grouped.filter(group => group.students.length > 0);
+}
+
+const FocusQuestionChart: React.FC<{ question: Question; groups: FocusGroup[]; onSelectStudent?: (id: string) => void }> = ({ question, groups, onSelectStudent }) => {
+  const total = groups.reduce((sum, group) => sum + group.students.length, 0);
+  const unanimous = groups.length === 1 && total > 0;
+  return <article className={`rounded-xl border p-4 ${unanimous ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'}`}>
+    <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-amber-300">{question.code}</span><span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{question.category}</span></div>
+    <h4 className="mt-3 text-sm font-bold leading-snug text-slate-900">{question.title}</h4>
+    <p className="mb-4 mt-1 text-[10px] text-slate-500">{total} answered · percentage of responses to this question</p>
+    {unanimous && <div className="mb-4 flex items-center gap-3 rounded-lg border border-emerald-200 bg-white/80 p-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-emerald-600 text-sm font-extrabold text-white">100%</span><div><p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">Unanimous finding</p><p className="text-xs font-semibold text-emerald-950">All {total} participants selected {groups[0].label.toLowerCase()}.</p></div></div>}
+    {!total ? <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">No responses recorded for this question.</p> : <div className="space-y-3">{groups.map(group => {
+      const percent = total ? group.students.length / total * 100 : 0;
+      return <div key={group.label}>
+        <div className="mb-1.5 flex items-start justify-between gap-3 text-xs"><span className="font-semibold leading-snug text-slate-800">{group.label}</span><span className="shrink-0 tabular-nums text-slate-600">{group.students.length} · {percent.toFixed(0)}%</span></div>
+        <div className="h-2.5 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full transition-all" style={{ width: `${percent}%`, backgroundColor: group.color }}/></div>
+        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">{group.students.map(student => <button key={student.id} onClick={() => onSelectStudent?.(student.id)} className="text-[10px] text-amber-800 hover:underline">{student.name}</button>)}</div>
+      </div>;
+    })}</div>}
+  </article>;
+};
+
 export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, questions, onSelectCareer, onSelectStudent }) => {
   const [selectedCareer, setSelectedCareer] = useState('all');
   const [participantType, setParticipantType] = useState('all');
@@ -24,6 +75,17 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, question
   const shownQuestions = questionOptions.filter(item => (selectedCareer === 'all' || item.career === selectedCareer) && (selectedQuestion === 'all' || item.key === selectedQuestion));
   const chartCareers = selectedCareer === 'all' ? careers : [selectedCareer];
   const totals = metrics(filtered, questions);
+  const filmCareer = careers.find(career => shortCareer(career).toLowerCase().includes('film and television'));
+  const filmCohort = filmCareer ? students.filter(student => student.career === filmCareer) : [];
+  const filmQuestions = filmCareer ? questionsFor(filmCareer, questions) : [];
+  const focusQuestions = [3, 7, 6].map(id => ({
+    question: filmQuestions.find(question => question.id === id),
+    groups: filmFocusDistribution(filmCohort, id),
+  })).filter((item): item is { question: Question; groups: FocusGroup[] } => Boolean(item.question));
+  const campusGroup = focusQuestions.find(item => item.question.id === 3)?.groups.find(group => group.label === 'Campus green areas');
+  const careGroup = focusQuestions.find(item => item.question.id === 6)?.groups.find(group => group.label.startsWith('Protect Hugos'));
+  const abroadIds = new Set(focusQuestions.find(item => item.question.id === 7)?.groups.filter(group => !['Remain in Colombia', 'Other / undecided'].includes(group.label)).flatMap(group => group.students.map(student => student.id)) || []);
+  const crossQuestionStudents = (campusGroup?.students || []).filter(student => careGroup?.students.some(carer => carer.id === student.id) && abroadIds.has(student.id));
 
   return <div className="space-y-7 pb-12">
     <section className="relative overflow-hidden rounded-2xl bg-slate-950 text-white p-6 sm:p-8">
@@ -47,6 +109,15 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ students, question
         <label className="text-xs font-semibold text-slate-600 sm:col-span-2 xl:col-span-1">Question<select value={selectedQuestion} onChange={e => setSelectedQuestion(e.target.value)} className="block w-full mt-1.5 p-2.5 border border-slate-300 rounded-lg bg-white text-sm text-slate-900"><option value="all">All questions ({questionOptions.length})</option>{questionOptions.filter(item => selectedCareer === 'all' || item.career === selectedCareer).map(item => <option key={item.key} value={item.key}>{shortCareer(item.career)} · {item.question.code} — {item.question.title}</option>)}</select></label>
       </div>
     </section>
+
+    {filmCareer && <section className="space-y-4 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-emerald-50/50 p-4 sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-amber-800">Featured cross-question analysis · {shortCareer(filmCareer)}</p><h3 className="mt-1 text-xl font-bold text-slate-950">Campus connection, mascot care &amp; exchange</h3><p className="mt-1 text-xs text-slate-600">Categories are derived from each participant’s recorded Q3, Q6 and Q7 answer. Click a name to open that participant’s profile.</p></div><span className="rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-amber-200">{filmCohort.length} participants · updates from current records</span></div>
+      {focusQuestions.length > 0 && <>
+        {focusQuestions.filter(item => item.question.id === 3).map(item => <FocusQuestionChart key={item.question.id} question={item.question} groups={item.groups} onSelectStudent={onSelectStudent}/>)}
+        <div className="grid gap-4 lg:grid-cols-2">{focusQuestions.filter(item => item.question.id !== 3).map(item => <FocusQuestionChart key={item.question.id} question={item.question} groups={item.groups} onSelectStudent={onSelectStudent}/>)}</div>
+        <div className="flex flex-col gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-wide text-indigo-800">Cross-question overlap · Q3 + Q6 + Q7</p><p className="mt-1 text-sm font-bold text-slate-900">Campus preference, mascot care and exchange interest</p><p className="mt-1 text-xs leading-relaxed text-slate-600">{crossQuestionStudents.length} of {campusGroup?.students.length || 0} students who named campus green areas also described protecting Hugos’ habitat and chose an international exchange destination.</p></div><div className="flex flex-wrap gap-2 sm:max-w-[45%]">{crossQuestionStudents.map(student => <button key={student.id} onClick={() => onSelectStudent?.(student.id)} className="rounded-full border border-indigo-200 bg-white px-2.5 py-1 text-[10px] font-semibold text-indigo-900 hover:bg-indigo-100">{student.name}</button>)}</div></div>
+      </>}
+    </section>}
 
     <ResearchMetrics students={filtered} questions={questions} />
     <EnglishChart students={filtered} />
